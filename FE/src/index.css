@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .input-style {
+      @apply w-80 px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border-b-2  rounded;
+    }
+    .button-style {
+        @apply bg-[#7b96ec] text-white p-3 font-bold cursor-pointer
+    }
+
+}
