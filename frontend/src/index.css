@@ -10,11 +10,18 @@
 
 @layer components {
   .input-style {
-    @apply w-80 px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border-b-2 rounded;
+    @apply w-80 px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border-b-2 rounded outline-none focus:border-[#f9a8d4]; 
   }
 
   .button-style {
-    @apply bg-[#7b96ec] text-white p-3 font-bold cursor-pointer
+    @apply bg-[#7b96ec] text-white p-3 font-bold cursor-pointer hover:bg-[#3730a3] transition-all rounded-lg
   }
 
+}
+
+.darkmode-input:checked + div .darkmode-spinner {
+  transform: translateX(70px);
+}
+.darkmode-input:checked + div {
+  background-color: black
 }

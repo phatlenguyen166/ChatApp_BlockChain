@@ -32,7 +32,7 @@ export default [
       'react/jsx-no-target-blank': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off',
       'prettier/prettier': [
         'warn',
         {

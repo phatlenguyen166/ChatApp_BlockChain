@@ -1,9 +1,12 @@
-import Login from '../../FE/src/pages/Login'
+import Login from '../src/pages/Login'
+import Register from '../src/pages/Register'
 import './App.css'
-import HelloWorld from './Components/HelloWorld'
+import Home from './pages/Home'
 
 function App() {
-  return <Login />
+  return (
+    <Home/>
+  )
 }
 
 export default App
