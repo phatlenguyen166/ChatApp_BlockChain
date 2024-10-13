@@ -6,8 +6,8 @@ const Home = () => {
   return (
     <div className=' bg-[#a7bcff] h-[100vh] flex items-center justify-center'>
       <div className='w-[60%] h-[80%] border-2 border-solid border-white rounded-xl flex overflow-hidden'>
-        <SideBar/>
-        <Chat/>
+        <SideBar />
+        <Chat />
       </div>
     </div>
   )

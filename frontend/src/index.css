@@ -10,7 +10,7 @@
 
 @layer components {
   .input-style {
-    @apply w-80 px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border-b-2 rounded outline-none focus:border-[#f9a8d4]; 
+    @apply w-80 px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border-b-2 rounded outline-none focus:border-[#f9a8d4] mb-0; 
   }
 
   .button-style {
