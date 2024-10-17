@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react/prop-types */
+import React from 'react'
+import { useState, useEffect } from 'react'
 
-const Message = () => {
-  const [messages, setMessages] = useState([])
-  // Thêm state mới cho hình ảnh được zoom
+const Message = ({ message }) => {
+  // const [messages, setMessages] = useState([])
   const [zoomedImage, setZoomedImage] = useState(null)
-
-  useEffect(() => {
-    loadMessages()
-    window.addEventListener('newMessage', loadMessages)
-    return () => {
-      window.removeEventListener('newMessage', loadMessages)
-    }
-  }, [])
-
-  const loadMessages = () => {
-    const storedMessages = JSON.parse(localStorage.getItem('messages') || '[]')
-    setMessages(storedMessages)
-  }
 
   const renderMediaMessage = (message) => {
     if (message.content.type.startsWith('video/')) {
@@ -48,23 +36,16 @@ const Message = () => {
 
   return (
     <div className='flex items-center justify-center'>
-      <div className='w-full h-full p-4 bg-[#ddddf7] shadow-md'>
+      <div className='w-full h-full p-4 bg-[#ddddf7]'>
         <div className='space-y-4'>
-          {messages.map((message, index) => (
-            <div key={index} className='flex justify-end items-start'>
-              <div className='mr-3 text-right'>
-                <div className='bg-[#8da4f1] text-white rounded-lg p-2 inline-block'>
-                  {message.type === 'media' ? renderMediaMessage(message) : <p>{message.content}</p>}
-                </div>
-                <p className='text-xs text-gray-500 mt-1'>{new Date(message.timestamp).toLocaleString()}</p>
+          <div className='flex justify-end items-start'>
+            <div className='mr-3 text-right'>
+              <div className='bg-[#8da4f1] text-white rounded-lg p-2 inline-block'>
+                {message.type === 'media' ? renderMediaMessage(message) : <p>{message.content}</p>}
               </div>
-              <img
-                className='w-10 h-10 rounded-full'
-                src='https://i.pinimg.com/originals/f9/4e/65/f94e657a802d5a1ecbe644c649748f57.gif'
-                alt='Sender Image'
-              />
+              <p className='text-xs text-gray-500 mt-1'>{new Date(message.timestamp).toLocaleString()}</p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
       {zoomedImage && (
@@ -75,6 +56,7 @@ const Message = () => {
           <img src={zoomedImage} alt='Zoomed image' className='w-[60%] h-[60%] object-contain' />
         </div>
       )}
+      {/* <span>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
     </div>
   )
 }
