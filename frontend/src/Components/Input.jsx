@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addMessage } from '../redux/reducers/messageReducer'
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024
 
 const Input = () => {
+  const dispatch = useDispatch()
   const [mediaFile, setMediaFile] = useState(null)
   const [textMessage, setTextMessage] = useState('')
   const [error, setError] = useState('')
@@ -29,34 +32,38 @@ const Input = () => {
 
   const handleSend = () => {
     try {
-      const messages = JSON.parse(localStorage.getItem('messages') || '[]')
       if (mediaFile) {
-        messages.push({
-          type: 'media',
-          content: mediaFile,
-          timestamp: new Date().toISOString()
-        })
+        dispatch(
+          addMessage({
+            type: 'media',
+            content: mediaFile,
+            timestamp: new Date().toISOString()
+          })
+        )
         setMediaFile(null)
       }
       if (textMessage.trim()) {
-        messages.push({
-          type: 'text',
-          content: textMessage.trim(),
-          timestamp: new Date().toISOString()
-        })
+        dispatch(
+          addMessage({
+            type: 'text',
+            content: textMessage.trim(),
+            timestamp: new Date().toISOString()
+          })
+        )
         setTextMessage('')
       }
-      localStorage.setItem('messages', JSON.stringify(messages))
-      // Thông báo cho component cha rằng có tin nhắn mới
-      window.dispatchEvent(new Event('newMessage'))
       setError('')
+      window.dispatchEvent(new Event('newMessage'))
     } catch (e) {
-      if (e.name === 'QuotaExceededError') {
-        setError('Storage is full. Please clear some space and try again.')
-      } else {
-        setError('An error occurred while saving the message.')
-      }
+      setError('An error occurred while saving the message.')
       console.error('Error saving message:', e)
+    }
+  }
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSend()
     }
   }
 
@@ -68,6 +75,7 @@ const Input = () => {
           placeholder='Type something.......'
           value={textMessage}
           onChange={(e) => setTextMessage(e.target.value)}
+          onKeyDown={onKeyDown}
         />
         <div className='flex justify-center gap-2 mr-3'>
           <label htmlFor='fileMedia'>
@@ -92,6 +100,7 @@ const Input = () => {
               id='fileMedia'
               accept='audio/*,video/*'
               onChange={(e) => handleFileChange(e, 'media')}
+              onKeyDown={onKeyDown}
             />
           </label>
 
@@ -116,6 +125,7 @@ const Input = () => {
               id='fileImage'
               accept='image/*'
               onChange={(e) => handleFileChange(e, 'image')}
+              onKeyDown={onKeyDown}
             />
           </label>
 
