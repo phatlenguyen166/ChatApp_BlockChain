@@ -3,12 +3,12 @@ import {uploadFile, uploadString, read } from '../ipfs/fileManager'
 import forge from 'node-forge';
 
 function generateRSAKeys() {
-  const keypair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
+  const keypair = forge.pki.rsa.generateKeyPair({ bits: 1024 });
   const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
   const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
   return {
-    publicKeyMsg: publicKeyPem,
-    privateKeyMsg: privateKeyPem,
+    messagePublicKey: publicKeyPem,
+    messagePrivateKey: privateKeyPem,
   };
 }
 
@@ -29,9 +29,28 @@ class ContractExecution {
   constructor(privateKey) {
     this.privateKey = privateKey; 
     this.account = web3.eth.accounts.privateKeyToAccount(privateKey);
-    const { publicKeyMsg, privateKeyMsg } = generateRSAKeys();
-    this.publicKeyMsg = publicKeyMsg;
-    this.privateKeyMsg = privateKeyMsg;
+    // const { messagePublicKey, messagePrivateKey } = generateRSAKeys();
+    // this.messagePublicKey = publicKeyMsg;
+    // this.messagePrivateKey = privateKeyMsg;
+  }
+
+  setMessageKey(messagePublicKey, messagePrivateKey) {
+    if (typeof this.messagePrivateKey != 'undefined') {
+      this.messagePublicKey = messagePublicKey;
+      this.messagePrivateKey = messagePrivateKey;
+    } else {
+      throw new Error('Key already set.');
+    }
+  }
+
+  setNewMessageKey() {
+    if (typeof this.messagePrivateKey != 'undefined') {
+    const { messagePublicKey, messagePrivateKey } = generateRSAKeys();
+    this.messagePublicKey = messagePublicKey;
+    this.messagePrivateKey = messagePrivateKey;
+    } else {
+      throw new Error('Key already set.');
+    }
   }
 
   async signAndSendTransaction(tx) {

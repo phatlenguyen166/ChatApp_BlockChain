@@ -22,9 +22,9 @@ class ChatManager extends ContractExecution {
     return await this.signAndSendTransaction(tx);
   }
 
-  async getMessage() {
+  async getMessage(friend) {
     try {
-      const messages = await ChatManagerContract.methods.getMessage().call();
+      const messages = await ChatManagerContract.methods.getMessage(friend).call({ from: this.account.address });
   
       const encryptMessages = await Promise.all(messages.map(async (message) => {
         const hashForSender = message.hashForSender;
@@ -50,6 +50,9 @@ class ChatManager extends ContractExecution {
     }
   }
   
+  async getLastMessage() {
+
+  }
 
   async handleMessageSentEvent(func) {
     await ChatManagerContract.events.MessageSent()
