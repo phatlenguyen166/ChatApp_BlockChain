@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import Web3 from 'web3'
-import CrytoJs from 'crypto-js'
+// import Web3 from 'web3'
+// import CrytoJs from 'crypto-js'
 import { useSelector, useDispatch } from 'react-redux'
 import { addAccountAction } from '../redux/reducers/accountReducer'
 
