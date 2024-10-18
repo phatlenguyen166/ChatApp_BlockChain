@@ -12,7 +12,7 @@ const SideBar = () => {
     <div className='flex-1 bg-[#3e3c61]'>
       <Navbar />
       <Search />
-      <Chats />
+      {/* <Chats /> */}
     </div>
   )
 }
