@@ -1,37 +1,40 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addMessage } from '../redux/reducers/messageReducer'
 
 const Message = ({ message }) => {
-  // const [messages, setMessages] = useState([])
   const [zoomedImage, setZoomedImage] = useState(null)
 
   const renderMediaMessage = (message) => {
-    if (message.content.type.startsWith('video/')) {
+    if (message.content.type === 1) {
+      // Video
       return (
         <video controls className='max-w-[300px] max-h-[250px] w-auto h-auto'>
-          <source src={message.content.data} type={message.content.type} />
+          <source src={message.content.data} />
           Your browser does not support the video tag.
         </video>
       )
-    } else if (message.content.type.startsWith('audio/')) {
+    } else if (message.type === 2) {
+      // Audio
       return (
         <audio controls className='max-w-[200px] w-full'>
-          <source src={message.content.data} type={message.content.type} />
+          <source src={message.content.data} />
           Your browser does not support the audio element.
         </audio>
       )
-    } else if (message.content.type.startsWith('image/')) {
+    } else if (message.content.type === 3) {
+      // Image
       return (
         <img
           src={message.content.data}
-          alt='Sent image'
-          className='max-w-[200px] max-h-[150px] w-auto h-auto object-contain cursor-pointer'
-          onClick={() => setZoomedImage(message.content.data)}
+          alt={message.content.name}
+          className='max-w-[300px] max-h-[250px] w-auto h-auto'
         />
       )
+    } else {
+      return <p>{message.content.data}</p>
     }
-    return null
   }
 
   return message.isSender ? (
@@ -41,13 +44,12 @@ const Message = ({ message }) => {
           <div className='flex justify-end items-start'>
             <div className='mr-3 text-right'>
               <div className='bg-[#8da4f1] text-white rounded-lg p-2 inline-block'>
-                {message.type === 'media' ? renderMediaMessage(message) : <p>{message.content}</p>}
+                {renderMediaMessage(message)} {/* Render media message */}
               </div>
-              <p className='text-xs text-gray-500 mt-1'>{new Date(message.timestamp).toLocaleString()}</p>
+              <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
             </div>
           </div>
         </div>
-        {/* <span>{message.timestamp}</span> */}
       </div>
       {zoomedImage && (
         <div
@@ -57,7 +59,6 @@ const Message = ({ message }) => {
           <img src={zoomedImage} alt='Zoomed image' className='w-[60%] h-[60%] object-contain' />
         </div>
       )}
-      {/* <span>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
     </div>
   ) : (
     <div className='flex items-start mb-2'>
@@ -67,8 +68,10 @@ const Message = ({ message }) => {
         className='w-10 h-10 rounded-full mr-2'
       />
       <div className=''>
-        <p className='bg-white p-2 rounded-lg shadow-md max-w-xs text-gray-800'>{message.content}</p>
-        {/* <span className='text-xs text-gray-500 mt-1 ml-3'>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
+        <div className='p-2 bg-white div-2 rounded-lg shadow-md max-w-xs text-gray-800'>
+          {renderMediaMessage(message)}
+        </div>
+        <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
       </div>
     </div>
   )

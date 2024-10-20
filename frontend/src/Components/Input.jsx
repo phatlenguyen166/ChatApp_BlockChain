@@ -10,44 +10,60 @@ const Input = () => {
   const [textMessage, setTextMessage] = useState('')
   const [error, setError] = useState('')
 
-  const handleFileChange = (event, fileType) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0]
+    // console.log(file)
+
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
         setError(`File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit.`)
         return
       }
+
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onloadend = (e) => {
         const base64File = e.target.result
-        setMediaFile({
-          name: file.name,
-          type: file.type,
-          data: base64File
-        })
+        console.log(base64File)
+
+        const newMessage = {
+          content: {
+            name: file.name,
+            data: base64File,
+            type: file.type.startsWith('video/')
+              ? 1
+              : file.type.startsWith('image/')
+                ? 3
+                : file.type.startsWith('audio/')
+                  ? 2
+                  : 0
+          },
+          isSender: false,
+          timeStamp: new Date().toISOString()
+        }
+        dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
+        setMediaFile(null) // Reset media file sau khi gửi
       }
-      reader.readAsDataURL(file)
+
+      reader.readAsDataURL(file) // Đọc file dưới dạng base64
     }
   }
 
   const handleSend = () => {
     try {
       if (mediaFile) {
-        dispatch(
-          addMessage({
-            type: 'media',
-            content: mediaFile,
-            timestamp: new Date().toISOString()
-          })
-        )
-        setMediaFile(null)
+        handleFileChange({ target: { files: [mediaFile] } })
       }
       if (textMessage.trim()) {
         dispatch(
           addMessage({
-            type: 'text',
-            content: textMessage.trim(),
-            timestamp: new Date().toISOString()
+            content: {
+              name: 'Text Message',
+              data: textMessage.trim(),
+              type: 0 // 0 cho text
+            },
+            isSender: false,
+            timeStamp: new Date().toISOString(),
+            data: ''
           })
         )
         setTextMessage('')
@@ -99,7 +115,7 @@ const Input = () => {
               className='hidden'
               id='fileMedia'
               accept='audio/*,video/*'
-              onChange={(e) => handleFileChange(e, 'media')}
+              onChange={handleFileChange}
               onKeyDown={onKeyDown}
             />
           </label>
@@ -124,7 +140,7 @@ const Input = () => {
               className='hidden'
               id='fileImage'
               accept='image/*'
-              onChange={(e) => handleFileChange(e, 'image')}
+              onChange={handleFileChange}
               onKeyDown={onKeyDown}
             />
           </label>
