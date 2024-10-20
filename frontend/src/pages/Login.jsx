@@ -23,7 +23,7 @@ const Login = () => {
           <button className='button-style'>Sign in</button>
         </form>
         <p className='text-[#5b5d8d] mt-4 text-sm'>
-          You don't have an account? <NavLink to='/register'>Sign up</NavLink>
+          You dont have an account? <NavLink to='/register'>Sign up</NavLink>
         </p>
       </div>
     </div>

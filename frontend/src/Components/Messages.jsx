@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import Message from './Message'
-import IncomingMessage from './IncomingMessage'
+// import IncomingMessage from './IncomingMessage'
 
 const Messages = () => {
   const { messages } = useSelector((state) => state.messageReducer)
-  const { inComingMessages } = useSelector((state) => state.messageReducer)
 
   const messagesEndRef = useRef(null)
 
@@ -14,7 +13,7 @@ const Messages = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages, inComingMessages])
+  }, [messages])
 
   return (
     <div
@@ -28,9 +27,6 @@ const Messages = () => {
       dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500'
     >
       <div className='flex flex-col space-y-2'>
-        {inComingMessages.map((msg, index) => (
-          <IncomingMessage key={index} message={msg} />
-        ))}
         {messages.map((msg, index) => (
           <Message key={index} message={msg} />
         ))}

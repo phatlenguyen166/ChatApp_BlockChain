@@ -63,12 +63,5 @@ contract ChatManager {
     return messages[chatCode];
   }
 
-  function getLastMessage(address _friend) public view returns (Message memory) {
-    require(userManager.isFriendRelationship(_friend), "Need to be friend first");
-    bytes32 chatCode = _getChatCode(msg.sender, _friend);
-    uint chatLength = messages[chatCode].length;
-    return messages[chatCode][chatLength - 1];
-  }
-
 }
 

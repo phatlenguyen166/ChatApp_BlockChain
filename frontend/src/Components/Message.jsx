@@ -34,7 +34,7 @@ const Message = ({ message }) => {
     return null
   }
 
-  return (
+  return message.isSender ? (
     <div className='flex items-center justify-center'>
       <div className='w-full h-full p-4 bg-[#ddddf7]'>
         <div className='space-y-4'>
@@ -47,6 +47,7 @@ const Message = ({ message }) => {
             </div>
           </div>
         </div>
+        {/* <span>{message.timestamp}</span> */}
       </div>
       {zoomedImage && (
         <div
@@ -57,6 +58,18 @@ const Message = ({ message }) => {
         </div>
       )}
       {/* <span>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
+    </div>
+  ) : (
+    <div className='flex items-start mb-2'>
+      <img
+        src='https://i.pinimg.com/originals/4c/11/f7/4c11f751f8d87ba74ba90f3588d67022.gif'
+        alt='Avatar'
+        className='w-10 h-10 rounded-full mr-2'
+      />
+      <div className=''>
+        <p className='bg-white p-2 rounded-lg shadow-md max-w-xs text-gray-800'>{message.content}</p>
+        {/* <span className='text-xs text-gray-500 mt-1 ml-3'>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
+      </div>
     </div>
   )
 }

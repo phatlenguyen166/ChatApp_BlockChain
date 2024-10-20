@@ -4,12 +4,12 @@ const initialState = {
   messages: [{ content: '', type: 1, isSender: false, timeStamp: new Date() }],
   lastedMessages: {
     username: '',
-    content: '',
+    content: ''
   }
   // inComingMessages: ['hi guys', 'Tôi là Phong dz nè'],
 }
 
-const messageSlice = createSlice({
+const messageReducer = createSlice({
   name: 'messages',
   initialState,
   reducers: {
@@ -28,8 +28,5 @@ const messageSlice = createSlice({
   }
 })
 
-export const {
-  setMessages,
-  addMessage
-} = messageSlice.actions
-export default messageSlice.reducer
+export const { setMessages, addMessage } = messageReducer.actions
+export default messageReducer.reducer
