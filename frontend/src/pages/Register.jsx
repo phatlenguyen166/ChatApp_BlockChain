@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-// import Web3 from 'web3'
-// import CrytoJs from 'crypto-js'
 import { useSelector, useDispatch } from 'react-redux'
-import { addAccountAction } from '../redux/reducers/accountReducer'
+import { addUser } from '../redux/reducers/accountReducer'
 
 const Register = () => {
   const [username, setUsername] = useState('')
@@ -22,9 +20,19 @@ const Register = () => {
   } = useForm()
 
   const password = watch('password')
+  const confirmPassword = watch('confirmPassword')
+
   const onSubmit = (data) => {
-    // console.log(data)
-    // console.log(accounts)
+    // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp nhau không
+    if (data.password !== data.confirmPassword) {
+      alert('Passwords do not match!')
+      return
+    }
+
+    // Xử lý đăng ký tài khoản ở đây
+    console.log(data)
+    console.log(accounts)
+    // dispatch(addUser({ username, privateKey })) // Ví dụ nếu bạn muốn thêm người dùng vào Redux
   }
 
   return (
@@ -35,30 +43,15 @@ const Register = () => {
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
           <div>
             <input
-              {...register('name', { required: 'Username is required! ' })}
+              {...register('username', { required: 'Username is required! ' })}
               className='input-style'
               type='text'
-              placeholder='Display Name'
+              placeholder='Username'
               onChange={(e) => {
                 setUsername(e.target.value)
               }}
             />
-            {errors.name && <p className='text-red-600 text-sm ml-3'>{errors.name.message}</p>}
-          </div>
-          <div>
-            <input
-              {...register('email', {
-                required: 'Email is required!!',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'Invalid email address, example: abc@gmail.com'
-                }
-              })}
-              className='input-style'
-              type='text'
-              placeholder='Email'
-            />
-            {errors.email && <p className='text-red-600 text-sm ml-3'>{errors.email.message}</p>}
+            {errors.username && <p className='text-red-600 text-sm ml-3'>{errors.username.message}</p>}
           </div>
           <div>
             <input
@@ -75,24 +68,18 @@ const Register = () => {
             />
             {errors.password && <p className='text-red-600 text-sm ml-3'>{errors.password.message}</p>}
           </div>
-          <input className='input-style hidden' id='file' type='file' />
-          <label htmlFor='file' className='flex flex-row gap-3 ml-2 items-center text-[#8da4f1] cursor-pointer'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth='1.5'
-              stroke='currentColor'
-              className='size-8'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z'
-              />
-            </svg>
-            <span className='ml-1 text-sm'>Add an avatar</span>
-          </label>
+          <div>
+            <input
+              {...register('confirmPassword', {
+                required: 'Confirm Password is required! ',
+                validate: (value) => value === password || 'Passwords do not match!'
+              })}
+              className='input-style'
+              type='password'
+              placeholder='Confirm Password'
+            />
+            {errors.confirmPassword && <p className='text-red-600 text-sm ml-3'>{errors.confirmPassword.message}</p>}
+          </div>
 
           <button className='button-style'>Sign Up</button>
         </form>

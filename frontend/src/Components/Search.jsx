@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { searchUser } from '../redux/reducers/accountReducer' // Nhập action searchUser
+import { searchUsers } from '../redux/reducers/accountReducer' // Nhập action searchUser
 import Chats from './Chats'
 
 const Search = () => {
@@ -11,7 +11,7 @@ const Search = () => {
   const handleSearch = (event) => {
     const value = event.target.value
     setUserName(value)
-    dispatch(searchUser(value.trim() === '' ? '' : value))
+    dispatch(searchUsers(value.trim() === '' ? '' : value))
   }
 
   return (

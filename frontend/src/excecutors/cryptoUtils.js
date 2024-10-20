@@ -102,7 +102,6 @@ const fileToBase64 = async (file) => {
   })
 }
 
-// Chuyển đổi base64 thành File
 const base64ToUrl = (base64Data) => {
   const mimeMatch = base64Data.match(/^data:([a-zA-Z0-9+/.-]+);base64,/)
   const mimeType = mimeMatch ? mimeMatch[1] : 'application/octet-stream'
