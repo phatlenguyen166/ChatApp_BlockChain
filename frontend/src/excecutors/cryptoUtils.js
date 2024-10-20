@@ -30,28 +30,31 @@ const generateHash = (username, password) => {
 }
 
 const encryptWithAES = (hashKey, object) => {
-  const key = forge.util.createBuffer(hashKey).getBytes(16)
-  // Nếu object là một chuỗi, không cần chuyển đổi
+  const key = forge.util.createBuffer(hashKey, 'utf8').getBytes(16)
+
   const jsonString = typeof object === 'string' ? object : JSON.stringify(object)
+  console.log(jsonString)
   const cipher = forge.cipher.createCipher('AES-CBC', key)
   const iv = forge.random.getBytesSync(16)
 
   cipher.start({ iv: iv })
-  cipher.update(forge.util.createBuffer(jsonString))
+  cipher.update(forge.util.createBuffer(jsonString, 'utf8'))
   cipher.finish()
 
-  const encryptedData = forge.util.encode64(cipher.output.getBytes())
-  const combinedData = forge.util.encode64(iv + encryptedData)
+  const encryptedData = cipher.output.getBytes()
 
+  const combinedData = forge.util.encode64(iv + encryptedData)
   return combinedData
 }
 
 const decryptWithAES = (hashKey, combinedData) => {
-  const key = forge.util.createBuffer(hashKey).getBytes(16)
-  const decodedData = forge.util.decode64(combinedData)
+  const key = forge.util.createBuffer(hashKey, 'utf8').getBytes(16)
 
-  const iv = decodedData.slice(0, 16)
-  const encryptedData = decodedData.slice(16)
+  // Decode dữ liệu đã được mã hóa từ base64
+  const decodedData = forge.util.decode64(combinedData)
+  // Tách IV (16 bytes đầu) và dữ liệu mã hóa còn lại
+  const iv = decodedData.slice(0, 16) // Sử dụng slice để lấy 16 bytes đầu làm IV
+  const encryptedData = decodedData.slice(16) // Phần còn lại là dữ liệu mã hóa
 
   const decipher = forge.cipher.createDecipher('AES-CBC', key)
   decipher.start({ iv: iv })
@@ -59,7 +62,7 @@ const decryptWithAES = (hashKey, combinedData) => {
   const success = decipher.finish()
 
   if (success) {
-    const decryptedOutput = decipher.output.toString()
+    const decryptedOutput = decipher.output.toString('utf8')
     // Kiểm tra xem đầu ra có phải là JSON không
     try {
       return JSON.parse(decryptedOutput)

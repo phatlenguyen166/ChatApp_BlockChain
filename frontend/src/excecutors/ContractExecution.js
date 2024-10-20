@@ -9,7 +9,7 @@ class ContractExecution {
   }
 
   setMessageKey(messagePublicKey, messagePrivateKey) {
-    if (typeof this.messagePrivateKey != 'undefined') {
+    if (typeof this.messagePrivateKey === 'undefined') {
       this.messagePublicKey = messagePublicKey
       this.messagePrivateKey = messagePrivateKey
     } else {
@@ -18,7 +18,7 @@ class ContractExecution {
   }
 
   setNewMessageKey() {
-    if (typeof this.messagePrivateKey != 'undefined') {
+    if (typeof this.messagePrivateKey === 'undefined') {
       const { messagePublicKey, messagePrivateKey } = generateRSAKeys()
       this.messagePublicKey = messagePublicKey
       this.messagePrivateKey = messagePrivateKey

@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
+import { createAccount, UserManager } from '../excecutors/_index'
 import { addUser } from '../redux/reducers/accountReducer'
 
 const Register = () => {
-  const [username, setUsername] = useState('')
+  // const [username, setUsername] = useState('')
+  // const [account, setAccount] = useState(null)
+  // const [privateKey, setPrivateKey] = useState('')
+  const [userManager, setUserManager] = useState(null)
   const [account, setAccount] = useState(null)
-  const [privateKey, setPrivateKey] = useState('')
 
   const { accounts } = useSelector((state) => state.accountReducer)
 
@@ -22,16 +25,21 @@ const Register = () => {
   const password = watch('password')
   const confirmPassword = watch('confirmPassword')
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp nhau không
     if (data.password !== data.confirmPassword) {
       alert('Passwords do not match!')
       return
     }
 
+    setAccount(await createAccount())
+    const manager = new UserManager(account.privateKey)
+    setUserManager(manager)
+    console.log(userManager)
+    await userManager.registerDApp(data.username, data.password)
     // Xử lý đăng ký tài khoản ở đây
     console.log(data)
-    console.log(accounts)
+
     // dispatch(addUser({ username, privateKey })) // Ví dụ nếu bạn muốn thêm người dùng vào Redux
   }
 
@@ -47,9 +55,9 @@ const Register = () => {
               className='input-style'
               type='text'
               placeholder='Username'
-              onChange={(e) => {
-                setUsername(e.target.value)
-              }}
+              // onChange={(e) => {
+              //   setUsername(e.target.value)
+              // }}
             />
             {errors.username && <p className='text-red-600 text-sm ml-3'>{errors.username.message}</p>}
           </div>
