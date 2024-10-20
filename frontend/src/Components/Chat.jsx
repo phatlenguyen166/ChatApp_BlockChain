@@ -9,7 +9,7 @@ const Chat = () => {
         <span>Phong</span>
 
         <div className='flex items-center gap-3'>
-          <button onClick={() =>{}}>
+          <button onClick={() => {}}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -25,20 +25,6 @@ const Chat = () => {
               />
             </svg>
           </button>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='size-6 cursor-pointer'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
-            />
-          </svg>
         </div>
       </div>
       <Messages />

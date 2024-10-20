@@ -1,12 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { data } from 'autoprefixer'
 
 const initialState = {
-  messages: [
-    { content: 'Hi', type: 1, isSender: true, timeStamp: new Date() },
-    { content: 'My name is Phong', type: 1, isSender: false, timeStamp: new Date() },
-    { content: 'Nice to meet u', type: 1, isSender: true, timeStamp: new Date() },
-    { content: 'How are u', type: 1, isSender: true, timeStamp: new Date() }
-  ]
+  messages: [{ content: 'URL.createObjectURL()', isSender: true, timeStamp: new Date().toTimeString, type: 0 }]
 }
 
 const messageReducer = createSlice({
