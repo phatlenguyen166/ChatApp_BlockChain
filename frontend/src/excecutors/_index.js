@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import ChatManager from './ChatManager'
 import UserManager from './UserManager'
 import { web3 } from '../contracts/_index'

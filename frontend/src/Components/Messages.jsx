@@ -4,7 +4,7 @@ import Message from './Message'
 // import IncomingMessage from './IncomingMessage'
 
 const Messages = () => {
-  const { messages } = useSelector((state) => state.messageReducer)
+  const messages = useSelector((state) => state.messages.messages)
 
   const messagesEndRef = useRef(null)
 

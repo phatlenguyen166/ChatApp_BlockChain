@@ -1,22 +1,27 @@
 import React from 'react'
 import Messages from './Messages'
 import Input from './Input'
+import { useDispatch } from 'react-redux'
+import { displaySeacrh } from '../redux/reducers/componentReducer'
 
 const Chat = () => {
+
+  const dispatch = useDispatch()
+
   return (
     <div className='flex-[2]'>
       <div className='flex items-center justify-between bg-[#5d5b8d] text-gray-300] p-3'>
         <span>Phong</span>
 
         <div className='flex items-center gap-3'>
-          <button onClick={() => {}}>
+          <button onClick={() => dispatch(displaySeacrh())}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='size-6 cursor-pointer'
+              className='size-6 cursor-pointer text-white'
             >
               <path
                 strokeLinecap='round'

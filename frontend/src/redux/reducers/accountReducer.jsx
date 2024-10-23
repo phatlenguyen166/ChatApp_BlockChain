@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { 
+const initialState = {
   currentUser: {
     username: 'user',
     address: 'address'
@@ -8,11 +8,11 @@ const initialState = {
   users: [
     {
       username: 'user111',
-      address: ''
+      address: '111'
     },
     {
       username: 'user222',
-      address: ''
+      address: '222'
     }
   ],
   friends: [],
@@ -43,11 +43,7 @@ const accountReducer = createSlice({
       state.users.push(newUser)
     },
     changeCurrentUser: (state, action) => {
-      const currrentUser = {
-        username: action.payload.username,
-        address: action.payload.address
-      }
-      state.currentUser = currrentUser
+      state.currentUser = action.payload
     },
     addFriend: (state, action) => {
       state.friends.push(action.payload)

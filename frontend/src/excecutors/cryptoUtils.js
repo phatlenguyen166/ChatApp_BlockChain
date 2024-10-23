@@ -33,7 +33,6 @@ const encryptWithAES = (hashKey, object) => {
   const key = forge.util.createBuffer(hashKey, 'utf8').getBytes(16)
 
   const jsonString = typeof object === 'string' ? object : JSON.stringify(object)
-  console.log(jsonString)
   const cipher = forge.cipher.createCipher('AES-CBC', key)
   const iv = forge.random.getBytesSync(16)
 

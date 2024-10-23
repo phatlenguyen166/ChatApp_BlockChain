@@ -5,7 +5,7 @@ import Chats from './Chats'
 
 import { useSelector } from 'react-redux'
 const SideBar = () => {
-  const filteredUsers = useSelector((state) => state.accountReducer.filteredUsers)
+  const filteredUsers = useSelector((state) => state.users.filteredUsers)
   // console.log(filteredUsers.length)
 
   return (

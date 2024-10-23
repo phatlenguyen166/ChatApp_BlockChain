@@ -1,20 +1,19 @@
-import React, { useState } from 'react'
+import 'react-notifications/lib/notifications.css'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { createAccount, UserManager } from '../excecutors/_index'
-import { addUser } from '../redux/reducers/accountReducer'
+import { addUser, changeCurrentUser } from '../redux/reducers/accountReducer'
 
 const Register = () => {
   // const [username, setUsername] = useState('')
   // const [account, setAccount] = useState(null)
   // const [privateKey, setPrivateKey] = useState('')
-  const [userManager, setUserManager] = useState(null)
-  const [account, setAccount] = useState(null)
-
-  const { accounts } = useSelector((state) => state.accountReducer)
-
+  const currentUser = useSelector((state) => state.users.currentUser)
   const dispatch = useDispatch()
+
   const {
     register,
     watch,
@@ -23,7 +22,6 @@ const Register = () => {
   } = useForm()
 
   const password = watch('password')
-  const confirmPassword = watch('confirmPassword')
 
   const onSubmit = async (data) => {
     // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp nhau không
@@ -32,15 +30,23 @@ const Register = () => {
       return
     }
 
-    setAccount(await createAccount())
+    const account = await createAccount()
     const manager = new UserManager(account.privateKey)
-    setUserManager(manager)
-    console.log(userManager)
-    await userManager.registerDApp(data.username, data.password)
+    await manager.registerDApp(data.username, data.password)
     // Xử lý đăng ký tài khoản ở đây
-    console.log(data)
+    console.log(manager)
+    const userData = await manager.getUserInformation()
+    const createDate = new Date(Number(userData.timestamp) * 1000)
+    const userInfo = {
+      username: userData.username,
+      address: userData.userAddress,
+      publicKey: userData.publicKey,
+      timestamp: createDate.toISOString()
+    }
+    dispatch(changeCurrentUser(userInfo))
+    dispatch(addUser(userInfo))
+    NotificationManager.success(`Welcome ${data.username}`, 'Sign-up Successful')
 
-    // dispatch(addUser({ username, privateKey })) // Ví dụ nếu bạn muốn thêm người dùng vào Redux
   }
 
   return (
@@ -95,6 +101,7 @@ const Register = () => {
           Already have an account? <NavLink to='/'>Sign in</NavLink>
         </p>
       </div>
+      <NotificationContainer />
     </div>
   )
 }

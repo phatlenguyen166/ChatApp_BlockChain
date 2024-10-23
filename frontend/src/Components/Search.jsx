@@ -6,7 +6,7 @@ import Chats from './Chats'
 const Search = () => {
   const [userName, setUserName] = useState('')
   const dispatch = useDispatch()
-  const filteredUsers = useSelector((state) => state.accountReducer.filteredUsers)
+  const filteredUsers = useSelector((state) => state.users.filteredUsers)
 
   const handleSearch = (event) => {
     const value = event.target.value

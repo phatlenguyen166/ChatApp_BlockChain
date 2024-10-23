@@ -25,3 +25,8 @@
 .darkmode-input:checked + div {
   background-color: black
 }
+
+
+/* transition: all 0.2s ease-in-out; Thời gian và loại easing */
+
+  
