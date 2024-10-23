@@ -23,7 +23,7 @@ const Input = () => {
       const reader = new FileReader()
       reader.onloadend = (e) => {
         const base64File = e.target.result
-        console.log(base64File)
+        // console.log(base64File)
 
         const newMessage = {
           content: {
@@ -37,7 +37,7 @@ const Input = () => {
                   ? 2
                   : 0
           },
-          isSender: false,
+          isSender: true,
           timeStamp: new Date().toISOString()
         }
         dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
@@ -89,6 +89,7 @@ const Input = () => {
         <input
           className='w-full h-full border-none outline-none pl-2 mr-3'
           placeholder='Type something.......'
+          maxLength={50}
           value={textMessage}
           onChange={(e) => setTextMessage(e.target.value)}
           onKeyDown={onKeyDown}
