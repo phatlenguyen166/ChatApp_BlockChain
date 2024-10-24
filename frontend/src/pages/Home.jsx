@@ -3,10 +3,12 @@ import SideBar from '../Components/SideBar'
 import Chat from '../Components/Chat'
 import UserList from '../Components/UserList'
 import { useSelector } from 'react-redux'
+import UserManager from '../excecutors/UserManager'
 
 const Home = () => {
-
   const searchUsers = useSelector((state) => state.components.searchUsers)
+  const currentUser = useSelector((state) => state.users.currentUser)
+  const userManager = new UserManager(currentUser.username, currentUser.password)
 
   return (
     <div className=' bg-[#a7bcff] h-[100vh] flex items-center justify-center '>
@@ -14,7 +16,7 @@ const Home = () => {
         <SideBar />
         <Chat />
       </div>
-      {searchUsers ? <UserList /> : null}
+      {searchUsers && <UserList manager={userManager} />}
     </div>
   )
 }

@@ -1,38 +1,54 @@
 import 'react-notifications/lib/notifications.css'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { UserManager } from '../excecutors/_index'
 import { useSelector, useDispatch } from 'react-redux'
-import { changeCurrentUser } from '../redux/reducers/accountReducer'
+import { changeCurrentUser, searchFriends, setFriendList, setUserList } from '../redux/reducers/accountReducer'
 
 const Login = () => {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm()
 
-  const [userManager, setUserManager] = useState()
-  const currentUser = useSelector((state) => state.users.currentUser)
   const dispatch = useDispatch()
+  const stst = useSelector((state) => state.users.friends)
 
   const onSubmit = async (data) => {
     const manager = new UserManager(data.username, data.password)
     const userData = await manager.getUserInformation()
-    const friendData = await manager.getUserList()
-    console.log(friendData)
-    const createDate = new Date(Number(userData.timestamp) * 1000)
+    const usersData = await manager.getUserList()
+    const friendsData = await manager.getFriendList()
     const userInfo = {
       username: userData.username,
+      password: data.password,
       address: userData.userAddress,
       publicKey: userData.publicKey,
-      timestamp: createDate.toISOString()
+      timestamp: new Date(Number(userData.timestamp) * 1000)
     }
     dispatch(changeCurrentUser(userInfo))
-    // console.log(currentUser)
+    const users = usersData.map((user) => {
+      return {
+        username: user.username,
+        address: user.userAddress,
+      }
+    })
+    const friends = friendsData.map((user) => {
+      return {
+        username: user.username,
+        address: user.userAddress,
+      }
+    })
+    console.log(friends)
+    dispatch(setUserList(users))
+    dispatch(setFriendList(friends))
+    dispatch(searchFriends(''))
     NotificationManager.success(`Welcome ${data.username}`, 'Login Successful')
+    setTimeout(() => navigate('/home'), 1000)
   }
 
   return (

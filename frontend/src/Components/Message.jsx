@@ -15,7 +15,7 @@ const Message = ({ message }) => {
           Your browser does not support the video tag.
         </video>
       )
-    } else if (message.type === 2) {
+    } else if (message.content.type === 2) {
       // Audio
       return (
         <audio controls className='max-w-[200px] w-full'>

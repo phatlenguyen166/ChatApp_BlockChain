@@ -7,12 +7,24 @@ const initialState = {
   },
   users: [
     {
-      username: 'user111',
+      username: 'YBXGmvSf67',
       address: '111'
     },
     {
-      username: 'user222',
+      username: 'xw0Hwp8J9O',
       address: '222'
+    },
+    {
+      username: 'kd5zflw4',
+      address: '333'
+    },
+    {
+      username: 'Fq67I',
+      address: '444'
+    },
+    {
+      username: 'bs4Ei0lxiNwd',
+      address: '555'
     }
   ],
   friends: [],
@@ -52,13 +64,12 @@ const accountReducer = createSlice({
       state.users = action.payload
     },
     setFriendList: (state, action) => {
-      const friendsAddress = action.payload
-      state.friends = friendsAddress.map((address) => state.users.find((user) => user.address === address))
+      state.friends = action.payload
     },
     searchUsers: (state, action) => {
-      const searchTerm = action.payload.toLowerCase()
+      const searchTerm = action.payload.trim().toLowerCase()
       if (action.payload !== '') {
-        state.filteredUsers = state.users.filter((friend) => friend.username.toLowerCase().includes(searchTerm))
+        state.filteredUsers = state.users.filter((user) => user.username.toLowerCase().includes(searchTerm))
       } else {
         state.filteredUsers = state.users
       }
@@ -74,5 +85,5 @@ const accountReducer = createSlice({
   }
 })
 
-export const { addUser, changeCurrentUser, addFriend, setUserList, setFriendList, searchUsers } = accountReducer.actions
+export const { addUser, changeCurrentUser, addFriend, setUserList, setFriendList, searchUsers, searchFriends } = accountReducer.actions
 export default accountReducer.reducer

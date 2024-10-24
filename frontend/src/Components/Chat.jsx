@@ -3,9 +3,9 @@ import Messages from './Messages'
 import Input from './Input'
 import { useDispatch } from 'react-redux'
 import { displaySeacrh } from '../redux/reducers/componentReducer'
+import { searchUser } from '../redux/reducers/accountReducer'
 
-const Chat = () => {
-
+const Chat = React.memo(() => {
   const dispatch = useDispatch()
 
   return (
@@ -14,7 +14,11 @@ const Chat = () => {
         <span>Phong</span>
 
         <div className='flex items-center gap-3'>
-          <button onClick={() => dispatch(displaySeacrh())}>
+          <button
+            onClick={() => {
+              dispatch(searchUser('')), dispatch(displaySeacrh())
+            }}
+          >
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -36,6 +40,8 @@ const Chat = () => {
       <Input />
     </div>
   )
-}
+})
+
+Chat.displayName = 'Chat'
 
 export default Chat

@@ -1,16 +1,15 @@
 import 'react-notifications/lib/notifications.css'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { createAccount, UserManager } from '../excecutors/_index'
 import { addUser, changeCurrentUser } from '../redux/reducers/accountReducer'
 
 const Register = () => {
-  // const [username, setUsername] = useState('')
-  // const [account, setAccount] = useState(null)
-  // const [privateKey, setPrivateKey] = useState('')
+  const navigate = useNavigate()
+
   const currentUser = useSelector((state) => state.users.currentUser)
   const dispatch = useDispatch()
 
@@ -34,19 +33,21 @@ const Register = () => {
     const manager = new UserManager(account.privateKey)
     await manager.registerDApp(data.username, data.password)
     // Xử lý đăng ký tài khoản ở đây
-    console.log(manager)
     const userData = await manager.getUserInformation()
+    console.log(userData)
     const createDate = new Date(Number(userData.timestamp) * 1000)
+    const img = `https://picsum.photos/id/222/200/300`
     const userInfo = {
       username: userData.username,
       address: userData.userAddress,
       publicKey: userData.publicKey,
-      timestamp: createDate.toISOString()
+      timestamp: createDate.toISOString(),
+      src: img
     }
     dispatch(changeCurrentUser(userInfo))
     dispatch(addUser(userInfo))
-    NotificationManager.success(`Welcome ${data.username}`, 'Sign-up Successful')
-
+    NotificationManager.success(`Sign-in again to use DApp`, 'Sign-up Successful')
+    setTimeout(() => navigate('/'), 1000)
   }
 
   return (
@@ -61,9 +62,6 @@ const Register = () => {
               className='input-style'
               type='text'
               placeholder='Username'
-              // onChange={(e) => {
-              //   setUsername(e.target.value)
-              // }}
             />
             {errors.username && <p className='text-red-600 text-sm ml-3'>{errors.username.message}</p>}
           </div>

@@ -87,7 +87,7 @@ class UserManager extends ContractExecution {
         .call({ from: this.account.address })
       return result
     } catch (error) {
-      console.error('Error fetching data:', error)
+      return false
     }
   }
 

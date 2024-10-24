@@ -15250,12 +15250,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xc69B5538dF73c1B8A9E73e98680d7E1061A777C6",
-      "transactionHash": "0x0d24df2f8d8e20d10812ceb3b3be791e1fdd4f283fb309219b0ba8038479c2c5"
+      "address": "0x8c36b3aec012038180E003993202694a5f72A650",
+      "transactionHash": "0xd40185d8cc9847a709eddb0bdb789a7637a1edf5206a806eca01448dd572038a"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-10-22T14:48:37.009Z",
+  "updatedAt": "2024-10-24T02:58:25.557Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
