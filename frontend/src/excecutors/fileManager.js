@@ -8,8 +8,8 @@ async function storeDataToIPFS(data, senderPublicKey, receiverPublicKey) {
   const aesKey = forge.random.getBytesSync(16)
   const encryptedData = encryptWithAES(aesKey, data)
 
-  const encryptedAESforSender = encryptWithRSA(senderPublicKey, aesKey)
-  const encryptedAESforReceiver = encryptWithRSA(receiverPublicKey, aesKey)
+  const encryptedAESforSender = await encryptWithRSA(senderPublicKey, aesKey)
+  const encryptedAESforReceiver = await encryptWithRSA(receiverPublicKey, aesKey)
 
   const jsonPayload = {
     encryptedData,
@@ -25,6 +25,7 @@ async function uploadDataToIPFS(jsonData) {
   try {
     const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' })
     const added = await ipfs.add(blob)
+    console.log(blob, added, jsonData)
     return added.path
   } catch (error) {
     console.error('Error uploading string:', error)
@@ -35,16 +36,16 @@ async function uploadDataToIPFS(jsonData) {
 const retrieveDataFromIPFS = async (cid, privateKey, isSender) => {
   try {
     const stream = ipfs.cat(cid)
+    console.log(stream, isSender)
     let data = ''
     for await (const chunk of stream) {
-      data += chunk.toString()
+      data += new TextDecoder().decode(chunk)
     }
-
     const jsonPayload = JSON.parse(data)
 
     const aesKey = isSender
-      ? decryptWithRSA(privateKey, jsonPayload.encryptedAESforSender)
-      : decryptWithRSA(privateKey, jsonPayload.encryptedAESforReceiver)
+      ? await decryptWithRSA(privateKey, jsonPayload.encryptedAESforSender)
+      : await decryptWithRSA(privateKey, jsonPayload.encryptedAESforReceiver)
 
     const decryptedData = decryptWithAES(aesKey, jsonPayload.encryptedData)
     return decryptedData

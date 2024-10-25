@@ -1,7 +1,7 @@
 import forge from 'node-forge'
 
 const generateRSAKeys = () => {
-  const keypair = forge.pki.rsa.generateKeyPair({ bits: 1024 })
+  const keypair = forge.pki.rsa.generateKeyPair({ bits: 2048 })
   const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey)
   const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
   return {
@@ -10,16 +10,28 @@ const generateRSAKeys = () => {
   }
 }
 
-const encryptWithRSA = (publicKey, data) => {
-  const publicKeyObj = forge.pki.publicKeyFromPem(publicKey)
-  const encryptedData = publicKeyObj.encrypt(data, 'RSA-OAEP')
-  return forge.util.encode64(encryptedData)
+const encryptWithRSA = async (publicKeyPem, message) => {
+  const publicKey = forge.pki.publicKeyFromPem(publicKeyPem)
+  const messageBytes = forge.util.encodeUtf8(message)
+  const encrypted = publicKey.encrypt(messageBytes, 'RSA-OAEP', {
+    md: forge.md.sha256.create(),
+    mgf1: {
+      md: forge.md.sha1.create()
+    }
+  })
+  return forge.util.encode64(encrypted)
 }
 
-const decryptWithRSA = (privateKey, encryptedData) => {
-  const privateKeyObj = forge.pki.privateKeyFromPem(privateKey)
-  const decryptedData = privateKeyObj.decrypt(forge.util.decode64(encryptedData), 'RSA-OAEP')
-  return decryptedData
+const decryptWithRSA = async (privateKeyPem, encryptedMessage) => {
+  const privateKey = forge.pki.privateKeyFromPem(privateKeyPem)
+  const encryptedBytes = forge.util.decode64(encryptedMessage)
+  const decryptedBytes = privateKey.decrypt(encryptedBytes, 'RSA-OAEP', {
+    md: forge.md.sha256.create(),
+    mgf1: {
+      md: forge.md.sha1.create()
+    }
+  })
+  return forge.util.decodeUtf8(decryptedBytes)
 }
 
 const generateHash = (username, password) => {

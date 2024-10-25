@@ -66,10 +66,11 @@ class ContractExecution {
       const receiver = await UserManagerContract.methods.getUserFromAddress(to).call({ from: this.account.address })
       const senderKey = this.messagePublicKey
       const receiverKey = receiver.publicKey
-      const cid = storeDataToIPFS(data, senderKey, receiverKey)
+      const cid = await storeDataToIPFS(data, senderKey, receiverKey)
+      console.log(cid)
 
-      const hashForSender = encryptWithRSA(senderKey, cid)
-      const hashForReceiver = encryptWithRSA(receiverKey, cid)
+      const hashForSender = await encryptWithRSA(senderKey, cid)
+      const hashForReceiver = await encryptWithRSA(receiverKey, cid)
       return {
         hashForSender,
         hashForReceiver
@@ -85,10 +86,11 @@ class ContractExecution {
       const isSender = from === this.account.address
       let decryptedCID
       if (isSender) {
-        decryptedCID = decryptWithRSA(this.messagePrivateKey, hashForSender)
+        decryptedCID = await decryptWithRSA(this.messagePrivateKey, hashForSender)
       } else {
-        decryptedCID = decryptWithRSA(this.messagePrivateKey, hashForReceiver)
+        decryptedCID = await decryptWithRSA(this.messagePrivateKey, hashForReceiver)
       }
+      console.log(decryptedCID)
 
       const data = await retrieveDataFromIPFS(decryptedCID, this.messagePrivateKey, isSender)
       return data

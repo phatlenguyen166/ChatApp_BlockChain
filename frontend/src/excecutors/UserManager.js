@@ -118,10 +118,7 @@ class UserManager extends ContractExecution {
       from: this.account.address,
       to: UserManagerContract._address,
       data: UserManagerContract.methods.addFriend(userAddress).encodeABI(),
-      gas: 22000n,
-      gasLimit: 2400000n,
-      gasPrice: web3.utils.toWei('10', 'gwei'),
-      chainId: 1337
+      gasPrice: web3.utils.toWei('10', 'gwei')
     }
 
     return await this.signAndSendTransaction(tx)
@@ -155,15 +152,16 @@ class UserManager extends ContractExecution {
   async sendMessage(friend, content, type) {
     // const data = type === 0 ? content : fileToBase64(content)
     const { hashForSender, hashForReceiver } = await this.upload(content, friend)
-    console.log(type)
 
     const nonce = await web3.eth.getTransactionCount(this.account.address, 'latest')
     const tx = {
       nonce: nonce,
       from: this.account.address,
-      to: ChatManagerContract.address,
-      data: ChatManagerContract.methods.sendMessage(friend, hashForSender, hashForReceiver, type).encodeABI()
+      to: ChatManagerContract._address,
+      data: ChatManagerContract.methods.sendMessage(friend, hashForSender, hashForReceiver, type).encodeABI(),
+      gasPrice: web3.utils.toWei('10', 'gwei')
     }
+    console.log(tx)
 
     return await this.signAndSendTransaction(tx)
   }
@@ -178,7 +176,7 @@ class UserManager extends ContractExecution {
           const hashForReceiver = message.hashForReceiver
           const from = message.sender
           const type = message.msgType
-          const timeStamp = message.timestamp
+          // const timeStamp = message.timestamp
 
           const content = await this.download(hashForSender, hashForReceiver, from, type)
           // const data = type === 0 ? content : base64ToUrl(content)
@@ -186,8 +184,7 @@ class UserManager extends ContractExecution {
           return {
             isSender: message.sender === this.account.address,
             type,
-            content,
-            timeStamp
+            content
           }
         })
       )

@@ -21,14 +21,13 @@ const Input = () => {
 
     if (file) {
       const type = ((m) => (m ? { video: 2, audio: 3, image: 1 }[m[1]] : 0))(file.type.match(/(video|audio|image)\//))
-      await manager.sendMessage(chatWith.address, file, type)
       if (file.size > MAX_FILE_SIZE) {
         NotificationManager.error(`File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit.`)
         return
       }
 
       const reader = new FileReader()
-      reader.onloadend = (e) => {
+      reader.onloadend = async (e) => {
         const base64File = e.target.result
         // console.log(base64File)
 
@@ -40,6 +39,7 @@ const Input = () => {
         }
         dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
         setMediaFile(null) // Reset media file sau khi gửi
+        await manager.sendMessage(chatWith.address, base64File, type)
       }
 
       reader.readAsDataURL(file) // Đọc file dưới dạng base64
