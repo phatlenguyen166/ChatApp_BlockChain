@@ -58,10 +58,16 @@ contract ChatManager {
   }
 
   function getMessage(address _friend) public view returns (Message[] memory) {
-    require(userManager.isFriendRelationship(_friend), "Need to be friend first");
+    require(userManager.isFriend(msg.sender, _friend), "Need to be friend first");
     bytes32 chatCode = _getChatCode(msg.sender, _friend);
     return messages[chatCode];
   }
 
+  function getLastMessage(address _friend) public view returns (Message memory) {
+    require(userManager.isFriend(msg.sender, _friend), "Need to be friend first");
+    bytes32 chatCode = _getChatCode(msg.sender, _friend);
+    require(messages[chatCode].length > 0, "No messages found");
+    return messages[chatCode][messages[chatCode].length - 1];
+}
 }
 

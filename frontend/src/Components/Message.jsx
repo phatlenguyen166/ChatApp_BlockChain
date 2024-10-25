@@ -12,50 +12,59 @@ const Message = ({ message }) => {
   }
 
   const renderMediaMessage = (message) => {
-    if (message.content.type === 1) {
+    const isSender = message.isSender
+
+    if (message.type === 2) {
       // Video
       return (
         <video controls className='max-w-[300px] max-h-[250px] w-auto h-auto'>
-          <source src={message.content.data} />
+          <source src={message.content} />
           Your browser does not support the video tag.
         </video>
       )
-    } else if (message.content.type === 2) {
+    } else if (message.type === 3) {
       // Audio
       return (
-        <AudioPlayer
-          src={message.content.data}
-          minimal={true}
-          width={300}
-          trackHeight={75}
-          barWidth={1}
-          gap={1}
-          visualise={true}
-          backgroundColor='#FFF8DE'
-          barColor='#C1D0B5'
-          barPlayedColor='#99A98F'
-          skipDuration={2}
-          showLoopOption={true}
-          showVolumeControl={true}
-          controls
-          className='max-w-[200px] w-full'
-        >
-          {/* <source src={message.content.data} />/ */}
-          Your browser does not support the audio element.
-        </AudioPlayer>
+        <div className={`px-5 ${isSender ? 'bg-[#8596cc]' : 'bg-[#fff]'} rounded-full`}>
+          <AudioPlayer
+            src={message.content}
+            minimal={true}
+            width={300}
+            trackHeight={40}
+            barWidth={2}
+            gap={1}
+            visualise={true}
+            backgroundColor={isSender ? '#8596cc' : '#fff'}
+            barColor={isSender ? '#fff' : '#e5e7eb'}
+            barPlayedColor={isSender ? '#ddddf7' : '#9a9b9e'}
+            seekBarColor={isSender ? '#fff' : '#000'}
+            skipDuration={2}
+            showLoopOption={true}
+            showVolumeControl={true}
+            controls
+          >
+            {/* <source src={message.content.data} />/ */}
+            Your browser does not support the audio element.
+          </AudioPlayer>
+        </div>
       )
-    } else if (message.content.type === 3) {
+    } else if (message.type === 1) {
       // Image
       return (
-        <img
-          src={message.content.data}
-          alt={message.content.name}
-          className='max-w-[300px] max-h-[250px] w-auto h-auto'
-          onClick={() => handleImageClick(message.content.data)}
-        />
+        <div className={`border border-[4px] ${isSender ? 'border-[#8596cc]' : 'border-white'} rounded-[20px]`}>
+          <img
+            src={message.content}
+            className='max-w-[300px] max-h-[250px] w-auto h-auto rounded-[16px]'
+            onClick={() => handleImageClick(message.content)}
+          />
+        </div>
       )
     } else {
-      return <p>{message.content.data}</p>
+      return (
+        <p className={`${isSender ? 'bg-[#8596cc] text-white' : 'bg-[#fff] text-black'} px-3 py-1 rounded-full`}>
+          {message.content}
+        </p>
+      )
     }
   }
 
@@ -71,13 +80,11 @@ const Message = ({ message }) => {
       )}
       {message.isSender ? (
         <div className='flex items-center justify-center'>
-          <div className='w-full h-full p-4 bg-[#ddddf7]'>
-            <div className='space-y-4'>
+          <div className='w-full h-full bg-[#ddddf7]'>
+            <div className='space-y-2'>
               <div className='flex justify-end items-start'>
                 <div className='mr-3 text-right'>
-                  <div className='bg-[#8da4f1] text-white rounded-lg p-2 inline-block'>
-                    {renderMediaMessage(message)} {/* Render media message */}
-                  </div>
+                  <div className='text-white rounded-full inline-block'>{renderMediaMessage(message)}</div>
                   <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
                 </div>
               </div>
@@ -85,17 +92,16 @@ const Message = ({ message }) => {
           </div>
         </div>
       ) : (
-        <div className='flex items-start mb-2'>
-          <img
-            src='https://i.pinimg.com/originals/4c/11/f7/4c11f751f8d87ba74ba90f3588d67022.gif'
-            alt='Avatar'
-            className='w-10 h-10 rounded-full mr-2'
-          />
-          <div className=''>
-            <div className='p-2 bg-white div-2 rounded-lg shadow-md max-w-xs text-gray-800'>
-              {renderMediaMessage(message)}
+        <div className='flex items-center justify-center'>
+          <div className='w-full h-full bg-[#ddddf7]'>
+            <div className='space-y-2'>
+              <div className='flex justify-start items-start'>
+                <div className='mr-3 text-left'>
+                  <div className='text-white rounded-full inline-block'>{renderMediaMessage(message)}</div>
+                  <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
+                </div>
+              </div>
             </div>
-            <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
           </div>
         </div>
       )}

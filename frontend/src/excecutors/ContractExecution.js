@@ -3,9 +3,11 @@ import { storeDataToIPFS, retrieveDataFromIPFS } from './fileManager'
 import { generateRSAKeys, encryptWithRSA, decryptWithRSA } from './cryptoUtils'
 
 class ContractExecution {
-  constructor(privateKey) {
-    this.privateKey = privateKey
-    this.account = web3.eth.accounts.privateKeyToAccount(privateKey)
+  constructor(privateKey = null) {
+    if (privateKey !== null) {
+      this.privateKey = privateKey
+      this.account = web3.eth.accounts.privateKeyToAccount(privateKey)
+    }
   }
 
   setMessageKey(messagePublicKey, messagePrivateKey) {

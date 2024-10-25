@@ -3,8 +3,10 @@ import ContractExecution from './ContractExecution'
 import { getDataWithAuth, storeDataWithAuth, fileToBase64, base64ToUrl } from './cryptoUtils'
 
 class UserManager extends ContractExecution {
-  constructor(param1, param2 = null) {
-    if (param2 === null) {
+  constructor(param1 = null, param2 = null) {
+    if (param1 === null) {
+      super()
+    } else if (param2 === null) {
       // Khởi tạo với privateKey
       super(param1)
     } else {
@@ -151,8 +153,9 @@ class UserManager extends ContractExecution {
   }
 
   async sendMessage(friend, content, type) {
-    const data = type === 0 ? content : fileToBase64(content)
-    const { hashForSender, hashForReceiver } = await this.upload(data, friend)
+    // const data = type === 0 ? content : fileToBase64(content)
+    const { hashForSender, hashForReceiver } = await this.upload(content, friend)
+    console.log(type)
 
     const nonce = await web3.eth.getTransactionCount(this.account.address, 'latest')
     const tx = {
@@ -178,12 +181,12 @@ class UserManager extends ContractExecution {
           const timeStamp = message.timestamp
 
           const content = await this.download(hashForSender, hashForReceiver, from, type)
-          const data = type === 0 ? content : base64ToUrl(content)
+          // const data = type === 0 ? content : base64ToUrl(content)
 
           return {
             isSender: message.sender === this.account.address,
             type,
-            content: data,
+            content,
             timeStamp
           }
         })
@@ -207,5 +210,15 @@ class UserManager extends ContractExecution {
       })
   }
 }
+
+let userInstance = new UserManager()
+
+const getUser = () => userInstance
+const setUser = (username, password) => {
+  userInstance = new UserManager(username, password)
+  return userInstance
+}
+
+export { getUser, setUser }
 
 export default UserManager

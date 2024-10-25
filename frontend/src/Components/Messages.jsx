@@ -17,7 +17,7 @@ const Messages = () => {
 
   return (
     <div
-      className='bg-[#ddddf7] border-b-4 h-[calc(100%-120px)] flex flex-col p-4 overflow-y-auto
+      className='bg-[#ddddf7] border-b-4 h-[calc(100%-100px)] flex flex-col p-4 overflow-y-auto
       [&::-webkit-scrollbar]:w-2
       [&::-webkit-scrollbar-track]:rounded-full
       [&::-webkit-scrollbar-track]:bg-gray-100

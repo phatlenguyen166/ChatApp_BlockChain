@@ -1,9 +1,9 @@
-import 'react-notifications/lib/notifications.css'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { UserManager } from '../excecutors/_index'
+import { getUser, setUser } from '../excecutors/UserManager'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeCurrentUser, searchFriends, setFriendList, setUserList } from '../redux/reducers/accountReducer'
 
@@ -16,34 +16,30 @@ const Login = () => {
   } = useForm()
 
   const dispatch = useDispatch()
-  const stst = useSelector((state) => state.users.friends)
 
   const onSubmit = async (data) => {
-    const manager = new UserManager(data.username, data.password)
+    const manager = setUser(data.username, data.password)
     const userData = await manager.getUserInformation()
     const usersData = await manager.getUserList()
     const friendsData = await manager.getFriendList()
     const userInfo = {
       username: userData.username,
       password: data.password,
-      address: userData.userAddress,
-      publicKey: userData.publicKey,
-      timestamp: new Date(Number(userData.timestamp) * 1000)
+      address: userData.userAddress
     }
     dispatch(changeCurrentUser(userInfo))
     const users = usersData.map((user) => {
       return {
         username: user.username,
-        address: user.userAddress,
+        address: user.userAddress
       }
     })
     const friends = friendsData.map((user) => {
       return {
         username: user.username,
-        address: user.userAddress,
+        address: user.userAddress
       }
     })
-    console.log(friends)
     dispatch(setUserList(users))
     dispatch(setFriendList(friends))
     dispatch(searchFriends(''))

@@ -1,22 +1,29 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { addMessage } from '../redux/reducers/messageReducer'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import { getUser } from '../excecutors/UserManager'
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024
+const MAX_FILE_SIZE = 25 * 1024 * 1024
 
 const Input = () => {
   const dispatch = useDispatch()
+  const chatWith = useSelector((state) => state.messages.chatWith)
+
   const [mediaFile, setMediaFile] = useState(null)
   const [textMessage, setTextMessage] = useState('')
   const [error, setError] = useState('')
+  const manager = getUser()
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0]
     // console.log(file)
 
     if (file) {
+      const type = ((m) => (m ? { video: 2, audio: 3, image: 1 }[m[1]] : 0))(file.type.match(/(video|audio|image)\//))
+      await manager.sendMessage(chatWith.address, file, type)
       if (file.size > MAX_FILE_SIZE) {
-        setError(`File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit.`)
+        NotificationManager.error(`File size exceeds ${MAX_FILE_SIZE / 1024 / 1024}MB limit.`)
         return
       }
 
@@ -26,17 +33,8 @@ const Input = () => {
         // console.log(base64File)
 
         const newMessage = {
-          content: {
-            name: file.name,
-            data: base64File,
-            type: file.type.startsWith('video/')
-              ? 1
-              : file.type.startsWith('image/')
-                ? 3
-                : file.type.startsWith('audio/')
-                  ? 2
-                  : 0
-          },
+          content: base64File,
+          type: type,
           isSender: true,
           timeStamp: new Date().toISOString()
         }
@@ -48,43 +46,41 @@ const Input = () => {
     }
   }
 
-  const handleSend = () => {
+  const handleSend = async () => {
     try {
       if (mediaFile) {
-        handleFileChange({ target: { files: [mediaFile] } })
+        await handleFileChange({ target: { files: [mediaFile] } })
       }
       if (textMessage.trim()) {
+        await manager.sendMessage(chatWith.address, textMessage.trim(), 0)
         dispatch(
           addMessage({
-            content: {
-              name: 'Text Message',
-              data: textMessage.trim(),
-              type: 0 // 0 cho text
-            },
-            isSender: false,
-            timeStamp: new Date().toISOString(),
-            data: ''
+            content: textMessage.trim(),
+            type: 0,
+            isSender: true,
+            timeStamp: new Date().toISOString()
           })
         )
         setTextMessage('')
       }
-      setError('')
-      window.dispatchEvent(new Event('newMessage'))
+      // window.dispatchEvent(new Event('newMessage'))
     } catch (e) {
       setError('An error occurred while saving the message.')
       console.error('Error saving message:', e)
     }
   }
 
-  const onKeyDown = (e) => {
+  const onKeyDown = async (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      handleSend()
+      await handleSend()
     }
   }
+  const imgRef = useRef(null)
+  const otherRef = useRef(null)
 
   return (
-    <div className='h-[72px] pt-4 flex flex-col justify-between items-center bg-white'>
+    <div className='h-[52px] pt-3 flex flex-col justify-between items-center bg-white'>
       <div className='w-full flex justify-between items-center'>
         <input
           className='w-full h-full border-none outline-none pl-2 mr-3'
@@ -118,6 +114,8 @@ const Input = () => {
               accept='audio/*,video/*'
               onChange={handleFileChange}
               onKeyDown={onKeyDown}
+              ref={otherRef}
+              onClick={() => (otherRef.current.value = '')}
             />
           </label>
 
@@ -143,6 +141,8 @@ const Input = () => {
               accept='image/*'
               onChange={handleFileChange}
               onKeyDown={onKeyDown}
+              ref={imgRef}
+              onClick={() => (imgRef.current.value = '')}
             />
           </label>
 
@@ -168,8 +168,9 @@ const Input = () => {
           </button>
         </div>
       </div>
-      {error && <div className='text-red-500 text-sm mt-1'>{error}</div>}
-      {mediaFile && <div className='text-green-500 text-sm mt-1'>File selected: {mediaFile.name}</div>}
+      {/* {error && <div className='text-red-500 text-sm mt-1'>{error}</div>} */}
+      {/* {mediaFile && <div className='text-green-500 text-sm mt-1'>File selected: {mediaFile.name}</div>} */}
+      <NotificationContainer />
     </div>
   )
 }

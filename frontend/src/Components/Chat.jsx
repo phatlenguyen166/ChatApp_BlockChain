@@ -1,22 +1,26 @@
 import React from 'react'
 import Messages from './Messages'
 import Input from './Input'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { displaySeacrh } from '../redux/reducers/componentReducer'
-import { searchUser } from '../redux/reducers/accountReducer'
+import { searchUsers } from '../redux/reducers/accountReducer'
+import { getUser } from '../excecutors/UserManager'
 
 const Chat = React.memo(() => {
   const dispatch = useDispatch()
+  const currentUser = useSelector((state) => state.users.currentUser)
+  const chatWith = useSelector((state) => state.messages.chatWith)
+  const manager = getUser(currentUser.username, currentUser.password)
 
   return (
     <div className='flex-[2]'>
       <div className='flex items-center justify-between bg-[#5d5b8d] text-gray-300] p-3'>
-        <span>Phong</span>
+        <span className='text-white'>{chatWith.username}</span>
 
         <div className='flex items-center gap-3'>
           <button
             onClick={() => {
-              dispatch(searchUser('')), dispatch(displaySeacrh())
+              dispatch(searchUsers('')), dispatch(displaySeacrh())
             }}
           >
             <svg

@@ -3,31 +3,28 @@ import { data } from 'autoprefixer'
 
 const initialState = {
   messages: [],
-  lastedMessages: {
+  lastedMessages: '',
+  chatWith: {
     username: '',
-    content: ''
+    address: ''
   }
-  // inComingMessages: ['hi guys', 'Tôi là Phong dz nè'],
 }
 
 const messageReducer = createSlice({
   name: 'messages',
   initialState,
   reducers: {
-    // addMessage: (state, action) => {
-    //   state.messages.push(action.payload)
-    // },
-    // setMessages: (state, action) => {
-    //   return action.payload
-    // }
     setMessages: (state, action) => {
       state.messages = action.payload
     },
     addMessage: (state, action) => {
       state.messages.push(action.payload)
+    },
+    changeChat: (state, action) => {
+      state.chatWith = action.payload
     }
   }
 })
 
-export const { setMessages, addMessage } = messageReducer.actions
+export const { setMessages, addMessage, changeChat } = messageReducer.actions
 export default messageReducer.reducer

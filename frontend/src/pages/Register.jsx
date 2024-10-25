@@ -1,4 +1,3 @@
-import 'react-notifications/lib/notifications.css'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -33,19 +32,6 @@ const Register = () => {
     const manager = new UserManager(account.privateKey)
     await manager.registerDApp(data.username, data.password)
     // Xử lý đăng ký tài khoản ở đây
-    const userData = await manager.getUserInformation()
-    console.log(userData)
-    const createDate = new Date(Number(userData.timestamp) * 1000)
-    const img = `https://picsum.photos/id/222/200/300`
-    const userInfo = {
-      username: userData.username,
-      address: userData.userAddress,
-      publicKey: userData.publicKey,
-      timestamp: createDate.toISOString(),
-      src: img
-    }
-    dispatch(changeCurrentUser(userInfo))
-    dispatch(addUser(userInfo))
     NotificationManager.success(`Sign-in again to use DApp`, 'Sign-up Successful')
     setTimeout(() => navigate('/'), 1000)
   }

@@ -55,8 +55,8 @@ function isUniqueUsername(string memory _username) public view returns (bool) {
 }
 
   function isFriendRelationship(address _user) public view returns (bool) {
-    require(isUser[msg.sender], "Create an account first");
-    require(isUser[_user], "Create an account first");
+    require(isUser[msg.sender], "Create an account first!!!");
+    require(isUser[_user], "Your friend not exist");
     require(msg.sender != _user, "User can not be friend with themself");
     return isFriend[msg.sender][_user];
   }

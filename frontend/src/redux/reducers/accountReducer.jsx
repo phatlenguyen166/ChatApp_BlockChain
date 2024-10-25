@@ -85,5 +85,6 @@ const accountReducer = createSlice({
   }
 })
 
-export const { addUser, changeCurrentUser, addFriend, setUserList, setFriendList, searchUsers, searchFriends } = accountReducer.actions
+export const { addUser, changeCurrentUser, addFriend, setUserList, setFriendList, searchUsers, searchFriends } =
+  accountReducer.actions
 export default accountReducer.reducer
