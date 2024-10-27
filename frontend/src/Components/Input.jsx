@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMessage } from '../redux/reducers/messageReducer'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
@@ -37,7 +37,7 @@ const Input = () => {
           isSender: true,
           timeStamp: new Date().toISOString()
         }
-        dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
+        // dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
         setMediaFile(null) // Reset media file sau khi gửi
         await manager.sendMessage(chatWith.address, base64File, type)
       }
@@ -53,14 +53,14 @@ const Input = () => {
       }
       if (textMessage.trim()) {
         await manager.sendMessage(chatWith.address, textMessage.trim(), 0)
-        dispatch(
-          addMessage({
-            content: textMessage.trim(),
-            type: 0,
-            isSender: true,
-            timeStamp: new Date().toISOString()
-          })
-        )
+        // dispatch(
+        //   addMessage({
+        //     content: textMessage.trim(),
+        //     type: 0,
+        //     isSender: true,
+        //     timeStamp: new Date().toISOString()
+        //   })
+        // )
         setTextMessage('')
       }
       // window.dispatchEvent(new Event('newMessage'))
@@ -170,7 +170,7 @@ const Input = () => {
       </div>
       {/* {error && <div className='text-red-500 text-sm mt-1'>{error}</div>} */}
       {/* {mediaFile && <div className='text-green-500 text-sm mt-1'>File selected: {mediaFile.name}</div>} */}
-      <NotificationContainer />
+      {/* <NotificationContainer /> */}
     </div>
   )
 }

@@ -1,11 +1,11 @@
-import { NotificationContainer, NotificationManager } from 'react-notifications'
-import React, { useState } from 'react'
+import { NotificationManager } from 'react-notifications'
+import React, { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { UserManager } from '../excecutors/_index'
 import { getUser, setUser } from '../excecutors/UserManager'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeCurrentUser, searchFriends, setFriendList, setUserList } from '../redux/reducers/accountReducer'
+import { addMessage } from '../redux/reducers/messageReducer'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -16,6 +16,7 @@ const Login = () => {
   } = useForm()
 
   const dispatch = useDispatch()
+  const chatWith = useSelector((state) => state.messages.chatWith)
 
   const onSubmit = async (data) => {
     const manager = setUser(data.username, data.password)
@@ -44,7 +45,7 @@ const Login = () => {
     dispatch(setFriendList(friends))
     dispatch(searchFriends(''))
     NotificationManager.success(`Welcome ${data.username}`, 'Login Successful')
-    setTimeout(() => navigate('/home'), 1000)
+    navigate('/home')
   }
 
   return (
@@ -72,7 +73,6 @@ const Login = () => {
           You dont have an account? <NavLink to='/register'>Sign up</NavLink>
         </p>
       </div>
-      <NotificationContainer />
     </div>
   )
 }

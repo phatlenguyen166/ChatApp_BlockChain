@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import SideBar from '../Components/SideBar'
 import Chat from '../Components/Chat'
 import UserList from '../Components/UserList'
 import { useSelector } from 'react-redux'
 import UserManager from '../excecutors/UserManager'
+
 
 const Home = () => {
   const searchUsers = useSelector((state) => state.components.searchUsers)
@@ -16,7 +17,7 @@ const Home = () => {
         <SideBar />
         <Chat />
       </div>
-      {searchUsers && <UserList manager={userManager} />}
+      {searchUsers && <UserList />}
     </div>
   )
 }

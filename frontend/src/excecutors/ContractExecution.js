@@ -67,7 +67,6 @@ class ContractExecution {
       const senderKey = this.messagePublicKey
       const receiverKey = receiver.publicKey
       const cid = await storeDataToIPFS(data, senderKey, receiverKey)
-      console.log(cid)
 
       const hashForSender = await encryptWithRSA(senderKey, cid)
       const hashForReceiver = await encryptWithRSA(receiverKey, cid)
@@ -90,7 +89,6 @@ class ContractExecution {
       } else {
         decryptedCID = await decryptWithRSA(this.messagePrivateKey, hashForReceiver)
       }
-      console.log(decryptedCID)
 
       const data = await retrieveDataFromIPFS(decryptedCID, this.messagePrivateKey, isSender)
       return data

@@ -1,3 +1,4 @@
+clear
 truffle compile | Out-Null
 Write-Host "Compile [DONE]!"
 

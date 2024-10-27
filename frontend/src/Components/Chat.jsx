@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Messages from './Messages'
 import Input from './Input'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,7 +10,11 @@ const Chat = React.memo(() => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.users.currentUser)
   const chatWith = useSelector((state) => state.messages.chatWith)
-  const manager = getUser(currentUser.username, currentUser.password)
+  const manager = getUser()
+
+  useEffect(() => {
+    document.title = `Chat: ${chatWith.username}`
+  }, [chatWith.username])
 
   return (
     <div className='flex-[2]'>

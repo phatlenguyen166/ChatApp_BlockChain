@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { hideSearch } from '../redux/reducers/componentReducer'
-import { searchUsers, addFriend, searchFriends } from '../redux/reducers/accountReducer'
+import { searchUsers, searchFriends } from '../redux/reducers/accountReducer'
 import PropTypes from 'prop-types'
+import { getUser } from '../excecutors/UserManager'
 
-const UserList = ({ manager }) => {
+const UserList = () => {
   const dispatch = useDispatch()
   const filteredUsers = useSelector((state) => state.users.filteredUsers)
 
@@ -39,9 +40,9 @@ const UserList = ({ manager }) => {
             <div className='border-b border-black w-[100%] py-2'>
               <p className='text-black-600 text-sm font-bold'>Result</p>
             </div>
-            <div className='flex flex-col w-[100%] space-y-2'>
+            <div className='flex flex-col w-[100%] space-y-2 h-[420px] overflow-y-scroll hide-scrollbar'>
               {filteredUsers.map((user) => (
-                <UserItem info={user} key={user.address} manager={manager} />
+                <UserItem info={user} key={user.address} />
               ))}
             </div>
           </div>
@@ -51,10 +52,11 @@ const UserList = ({ manager }) => {
   )
 }
 
-const UserItem = React.memo(({ info, manager }) => {
+const UserItem = React.memo(({ info }) => {
   const [isFriend, setIsFriend] = useState(false)
   const [isSelf, setIsSelf] = useState(false)
   const dispatch = useDispatch()
+  const manager = getUser()
 
   useEffect(() => {
     const checkFriendStatus = async () => {
@@ -70,12 +72,6 @@ const UserItem = React.memo(({ info, manager }) => {
   const handleAddfriend = async () => {
     await manager.addFriend(info.address)
     setIsFriend(true)
-    dispatch(
-      addFriend({
-        username: info.username,
-        address: info.address
-      })
-    )
     dispatch(searchFriends(''))
   }
   return (
@@ -108,12 +104,6 @@ UserItem.propTypes = {
   info: PropTypes.shape({
     username: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired
-  }).isRequired,
-  manager: PropTypes.object.isRequired
+  }).isRequired
 }
-
-UserList.propTypes = {
-  manager: PropTypes.object.isRequired
-}
-
 export default React.memo(UserList)

@@ -33,7 +33,7 @@ const Register = () => {
     await manager.registerDApp(data.username, data.password)
     // Xử lý đăng ký tài khoản ở đây
     NotificationManager.success(`Sign-in again to use DApp`, 'Sign-up Successful')
-    setTimeout(() => navigate('/'), 1000)
+    navigate('/')
   }
 
   return (
@@ -85,7 +85,6 @@ const Register = () => {
           Already have an account? <NavLink to='/'>Sign in</NavLink>
         </p>
       </div>
-      <NotificationContainer />
     </div>
   )
 }

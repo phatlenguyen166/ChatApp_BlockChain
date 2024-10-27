@@ -124,31 +124,6 @@ class UserManager extends ContractExecution {
     return await this.signAndSendTransaction(tx)
   }
 
-  async handleUserAddedEvent(func) {
-    try {
-      const userAddedEvent = UserManagerContract.events.UserAdded()
-      userAddedEvent.on('data', (event) => {
-        func(event)
-      })
-      userAddedEvent.on('error', (error) => {
-        console.error('Error:', error)
-      })
-    } catch (error) {
-      console.error('Error:', error)
-      throw new Error('Failed to listen UserAdded event')
-    }
-  }
-  async handleFriendAddedEvent(func) {
-    await UserManagerContract.events
-      .FriendAdded()
-      .on('data', (event) => {
-        func(event)
-      })
-      .on('error', (error) => {
-        console.error('Error:', error)
-      })
-  }
-
   async sendMessage(friend, content, type) {
     // const data = type === 0 ? content : fileToBase64(content)
     const { hashForSender, hashForReceiver } = await this.upload(content, friend)
@@ -175,8 +150,8 @@ class UserManager extends ContractExecution {
           const hashForSender = message.hashForSender
           const hashForReceiver = message.hashForReceiver
           const from = message.sender
-          const type = message.msgType
-          // const timeStamp = message.timestamp
+          const type = Number(message.msgType)
+          const timestamp = new Date(Number(message.timestamp * 1000n)).toISOString()
 
           const content = await this.download(hashForSender, hashForReceiver, from, type)
           // const data = type === 0 ? content : base64ToUrl(content)
@@ -184,7 +159,8 @@ class UserManager extends ContractExecution {
           return {
             isSender: message.sender === this.account.address,
             type,
-            content
+            content,
+            timestamp
           }
         })
       )
@@ -196,15 +172,94 @@ class UserManager extends ContractExecution {
     }
   }
 
-  async handleMessageSentEvent(func) {
-    await ChatManagerContract.events
-      .MessageSent()
-      .on('data', (event) => {
+  async getLastMessage(friend) {
+    try {
+      console.log(this.account.address)
+      const message = await ChatManagerContract.methods.getLastMessage(friend).call({ from: this.account.address })
+
+      const hashForSender = message.hashForSender
+      const hashForReceiver = message.hashForReceiver
+      const from = message.sender
+      const type = Number(message.msgType)
+      const timestamp = new Date(Number(message.timestamp * 1000n)).toISOString()
+
+      const content = await this.download(hashForSender, hashForReceiver, from, type)
+      const encryptMessages = {
+        isSender: message.sender === this.account.address,
+        type,
+        content,
+        timestamp
+      }
+      console.log(encryptMessages)
+      return encryptMessages
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      throw new Error('Có lỗi xảy ra khi lấy tin nhắn.')
+    }
+  }
+
+  handleMessageSentEvent(func) {
+    try {
+      const messageSent = ChatManagerContract.events.MessageSent()
+      messageSent.on('data', (event) => {
         func(event)
       })
-      .on('error', (error) => {
+      messageSent.on('error', (error) => {
         console.error('Error:', error)
       })
+    } catch (error) {
+      console.error('Error:', error)
+      throw new Error('Failed to listen MessageSent event')
+    }
+  }
+
+  handleUserAddedEvent(func) {
+    try {
+      const userAddedEvent = UserManagerContract.events.UserAdded()
+      userAddedEvent.on('data', (event) => {
+        func(event)
+      })
+      userAddedEvent.on('error', (error) => {
+        console.error('Error:', error)
+      })
+    } catch (error) {
+      console.error('Error:', error)
+      throw new Error('Failed to listen UserAdded event')
+    }
+  }
+  handleFriendAddedEvent(func) {
+    UserManagerContract.events.FriendAdded().on('data', (event) => {
+      func(event)
+    })
+    try {
+      const friendAddedEvent = UserManagerContract.events.FriendAdded()
+      friendAddedEvent.on('data', (event) => {
+        func(event)
+      })
+      friendAddedEvent.on('error', (error) => {
+        console.error('Error:', error)
+      })
+    } catch (error) {
+      console.error('Error:', error)
+      throw new Error('Failed to listen FriendAdded event')
+    }
+  }
+
+  offEvent(eventName) {
+    switch (eventName) {
+      case 'MessageSent':
+        ChatManagerContract.events.MessageSent().off()
+        break
+      case 'UserAdded':
+        UserManagerContract.events.UserAdded().off()
+        break
+      case 'FriendAdded':
+        UserManagerContract.events.FriendAdded().off()
+        break
+      default:
+        console.error('Invalid event name')
+        break
+    }
   }
 }
 

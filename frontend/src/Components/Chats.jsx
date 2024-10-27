@@ -32,6 +32,8 @@ const Chats = () => {
           <div>
             <span className='text-base font-semibold'>{user.username}</span>
             <p className='text-sm text-gray-300'>{user.address}</p>
+            {/* <span className='text-base font-semibold'></span>
+            <p className='text-sm text-gray-300'></p> */}
           </div>
         </div>
       )
