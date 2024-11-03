@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { hideSearch } from '../redux/reducers/componentReducer'
 import { searchUsers, searchFriends } from '../redux/reducers/accountReducer'
 import PropTypes from 'prop-types'
-import { getUser } from '../excecutors/UserManager'
+import { getUser } from '../utils/UserManager'
 
 const UserList = () => {
   const dispatch = useDispatch()

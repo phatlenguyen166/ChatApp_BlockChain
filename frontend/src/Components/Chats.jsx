@@ -1,7 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeChat, setMessages } from '../redux/reducers/messageReducer'
-import { getUser } from '../excecutors/UserManager'
+import { getUser } from '../utils/UserManager'
+import { checkConversationExists, initializeMessagesById, getMessagesByUser } from '../utils/useIndexedDB'
 
 const Chats = () => {
   const filteredFriends = useSelector((state) => state.users.filteredFriends)
@@ -15,9 +16,15 @@ const Chats = () => {
         address: user.address
       })
     )
-    const manager = getUser()
-    const messages = await manager.getMessage(user.address)
-    dispatch(setMessages(messages))
+    const isConservationExist = await checkConversationExists(user.address)
+    if (!isConservationExist) {
+      const manager = getUser()
+      const messages = await manager.getMessage(user.address)
+      await initializeMessagesById(user.address, messages)
+    }
+    const chatMessages = await getMessagesByUser(user.address)
+    console.log(chatMessages.map((message) => message.message))
+    dispatch(setMessages(chatMessages.map((message) => message.message)))
   }
 
   const renderUser = () => {

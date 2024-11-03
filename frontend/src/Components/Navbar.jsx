@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import { getUser } from '../excecutors/UserManager'
+import { getUser } from '../utils/UserManager'
 import { setFriendList, searchFriends } from '../redux/reducers/accountReducer'
 import { NotificationManager } from 'react-notifications'
 
@@ -11,33 +11,8 @@ const Navbar = () => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    const manager = getUser()
-    manager.handleFriendAddedEvent(async (e) => {
-      if (e.returnValues.userAddress === currentUser.address || e.returnValues.friendAddress === currentUser.address) {
-        const friendList = await manager.getFriendList()
-        const friends = friendList.map((friend) => {
-          return {
-            username: friend.username,
-            address: friend.userAddress
-          }
-        })
-        dispatch(setFriendList(friends))
-        dispatch(searchFriends(''))
-        if (e.returnValues.friendAddress === currentUser.address) {
-          NotificationManager.info('New friend added: ' + friends[friends.length - 1].username)
-        }
-      }
-      console.log('RERENDER ROOFI')
-    })
-    return () => {
-      manager.offEvent('FriendAdded')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendList])
-
   return (
-    <div className='flex items-center justify-between bg-[#2e1065] h-[48px] px-2'>
+    <div className='flex items-center justify-between bg-[#2e1065] w-[300px] h-[48px] px-2'>
       <span className='text-white font-bold'>Chat App</span>
       <div className='flex items-center gap-2'>
         <img

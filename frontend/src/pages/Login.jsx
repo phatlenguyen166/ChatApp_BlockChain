@@ -5,9 +5,10 @@ import { useForm } from 'react-hook-form'
 import { getUser, setUser } from '../excecutors/UserManager'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeCurrentUser, searchFriends, setFriendList, setUserList } from '../redux/reducers/accountReducer'
-import { addMessage } from '../redux/reducers/messageReducer'
+import { deleteDatabase } from '../utils/useIndexedDB'
 
 const Login = () => {
+  deleteDatabase()
   const navigate = useNavigate()
   const {
     register,

@@ -1,4 +1,4 @@
-import { web3, UserManagerContract, ChatManagerContract } from '../contracts/_index'
+import { web3 } from '../contracts/_index'
 import ContractExecution from './ContractExecution'
 import { getDataWithAuth, storeDataWithAuth, fileToBase64, base64ToUrl } from './cryptoUtils'
 
@@ -33,8 +33,8 @@ class UserManager extends ContractExecution {
       const tx = {
         nonce: nonce,
         from: this.account.address,
-        to: UserManagerContract._address,
-        data: UserManagerContract.methods.addUser(username, this.messagePublicKey).encodeABI(),
+        to: this.UserManagerContract._address,
+        data: this.UserManagerContract.methods.addUser(username, this.messagePublicKey).encodeABI(),
         gasPrice: web3.utils.toWei('10', 'gwei')
       }
       await this.signAndSendTransaction(tx)
@@ -53,7 +53,7 @@ class UserManager extends ContractExecution {
 
   async isUser() {
     try {
-      const result = await UserManagerContract.methods.isAnUser().call({ from: this.account.address })
+      const result = await this.UserManagerContract.methods.isAnUser().call({ from: this.account.address })
       return result
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -62,7 +62,7 @@ class UserManager extends ContractExecution {
 
   async getUserInformation() {
     try {
-      const result = await UserManagerContract.methods
+      const result = await this.UserManagerContract.methods
         .getUserFromAddress(this.account.address)
         .call({ from: this.account.address })
       return result
@@ -73,7 +73,7 @@ class UserManager extends ContractExecution {
 
   async findUser(userAddress) {
     try {
-      const result = await UserManagerContract.methods
+      const result = await this.UserManagerContract.methods
         .getUserFromAddress(userAddress)
         .call({ from: this.account.address })
       return result
@@ -84,7 +84,7 @@ class UserManager extends ContractExecution {
 
   async isFriend(userAddress) {
     try {
-      const result = await UserManagerContract.methods
+      const result = await this.UserManagerContract.methods
         .isFriendRelationship(userAddress)
         .call({ from: this.account.address })
       return result
@@ -95,7 +95,7 @@ class UserManager extends ContractExecution {
 
   async getUserList() {
     try {
-      const result = await UserManagerContract.methods.getUserList().call({ from: this.account.address })
+      const result = await this.UserManagerContract.methods.getUserList().call({ from: this.account.address })
       return result
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -104,7 +104,7 @@ class UserManager extends ContractExecution {
 
   async getFriendList() {
     try {
-      const result = await UserManagerContract.methods.getFriendList().call({ from: this.account.address })
+      const result = await this.UserManagerContract.methods.getFriendList().call({ from: this.account.address })
       return result
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -116,8 +116,8 @@ class UserManager extends ContractExecution {
     const tx = {
       nonce: nonce,
       from: this.account.address,
-      to: UserManagerContract._address,
-      data: UserManagerContract.methods.addFriend(userAddress).encodeABI(),
+      to: this.UserManagerContract._address,
+      data: this.UserManagerContract.methods.addFriend(userAddress).encodeABI(),
       gasPrice: web3.utils.toWei('10', 'gwei')
     }
 
@@ -132,18 +132,17 @@ class UserManager extends ContractExecution {
     const tx = {
       nonce: nonce,
       from: this.account.address,
-      to: ChatManagerContract._address,
-      data: ChatManagerContract.methods.sendMessage(friend, hashForSender, hashForReceiver, type).encodeABI(),
+      to: this.ChatManagerContract._address,
+      data: this.ChatManagerContract.methods.sendMessage(friend, hashForSender, hashForReceiver, type).encodeABI(),
       gasPrice: web3.utils.toWei('10', 'gwei')
     }
-    console.log(tx)
 
     return await this.signAndSendTransaction(tx)
   }
 
   async getMessage(friend) {
     try {
-      const messages = await ChatManagerContract.methods.getMessage(friend).call({ from: this.account.address })
+      const messages = await this.ChatManagerContract.methods.getMessage(friend).call({ from: this.account.address })
 
       const encryptMessages = await Promise.all(
         messages.map(async (message) => {
@@ -172,94 +171,89 @@ class UserManager extends ContractExecution {
     }
   }
 
-  async getLastMessage(friend) {
+  async readMessage(message) {
     try {
-      console.log(this.account.address)
-      const message = await ChatManagerContract.methods.getLastMessage(friend).call({ from: this.account.address })
-
       const hashForSender = message.hashForSender
       const hashForReceiver = message.hashForReceiver
       const from = message.sender
-      const type = Number(message.msgType)
-      const timestamp = new Date(Number(message.timestamp * 1000n)).toISOString()
+      const type = message.msgType
+      const timestamp = message.timestamp
 
       const content = await this.download(hashForSender, hashForReceiver, from, type)
-      const encryptMessages = {
+      const decryptMessage = {
         isSender: message.sender === this.account.address,
         type,
         content,
         timestamp
       }
-      console.log(encryptMessages)
-      return encryptMessages
+      return decryptMessage
     } catch (error) {
       console.error('Error fetching data:', error)
       throw new Error('Có lỗi xảy ra khi lấy tin nhắn.')
     }
   }
 
-  handleMessageSentEvent(func) {
-    try {
-      const messageSent = ChatManagerContract.events.MessageSent()
-      messageSent.on('data', (event) => {
-        func(event)
-      })
-      messageSent.on('error', (error) => {
-        console.error('Error:', error)
-      })
-    } catch (error) {
-      console.error('Error:', error)
-      throw new Error('Failed to listen MessageSent event')
-    }
-  }
-
-  handleUserAddedEvent(func) {
-    try {
-      const userAddedEvent = UserManagerContract.events.UserAdded()
-      userAddedEvent.on('data', (event) => {
-        func(event)
-      })
-      userAddedEvent.on('error', (error) => {
-        console.error('Error:', error)
-      })
-    } catch (error) {
-      console.error('Error:', error)
-      throw new Error('Failed to listen UserAdded event')
-    }
-  }
-  handleFriendAddedEvent(func) {
-    UserManagerContract.events.FriendAdded().on('data', (event) => {
-      func(event)
-    })
-    try {
-      const friendAddedEvent = UserManagerContract.events.FriendAdded()
-      friendAddedEvent.on('data', (event) => {
-        func(event)
-      })
-      friendAddedEvent.on('error', (error) => {
-        console.error('Error:', error)
-      })
-    } catch (error) {
-      console.error('Error:', error)
-      throw new Error('Failed to listen FriendAdded event')
-    }
-  }
-
   offEvent(eventName) {
-    switch (eventName) {
-      case 'MessageSent':
-        ChatManagerContract.events.MessageSent().off()
-        break
-      case 'UserAdded':
-        UserManagerContract.events.UserAdded().off()
-        break
-      case 'FriendAdded':
-        UserManagerContract.events.FriendAdded().off()
-        break
-      default:
-        console.error('Invalid event name')
-        break
+    try {
+      switch (eventName) {
+        case 'MessageSent':
+          this.ChatManagerContract.events.MessageSent().unsubscribe()
+          break
+        case 'UserAdded':
+          this.UserManagerContract.events.UserAdded().unsubscribe()
+          break
+        case 'FriendAdded':
+          this.UserManagerContract.events.FriendAdded().unsubscribe()
+          break
+        default:
+          console.error('Invalid event name')
+          break
+      }
+    } catch (error) {
+      console.error(`Error removing event listener for ${eventName}:`, error)
     }
+  }
+
+  // Hàm chung để lắng nghe sự kiện
+  async handleEvent(contract, eventName, callback) {
+    try {
+      const event = contract.events[eventName]({
+        fromBlock: 'latest'
+      })
+      await event.on('data', callback)
+      event.on('error', (error) => {
+        console.error(`Error in ${eventName} event:`, error)
+      })
+    } catch (error) {
+      console.error(`Failed to listen to ${eventName} event:`, error)
+      throw new Error(`Failed to listen ${eventName} event`)
+    }
+  }
+
+  // Các hàm xử lý sự kiện riêng lẻ
+  async handleMessageSentEvent(callback) {
+    try {
+      const event = this.ChatManagerContract.events.MessageSent({
+        filter: { receiver: this.account.address },
+        fromBlock: 'latest'
+      })
+
+      // Sử dụng một callback như một hàm để xử lý dữ liệu
+      event.on('data', (data) => {
+        callback(data)
+      }) // Gọi callback với dữ liệu sự kiện
+    } catch (error) {
+      console.error(`Failed to listen to MessageSent event:`, error)
+      throw new Error(`Failed to listen MessageSent event`)
+    }
+  }
+
+  async handleUserAddedEvent(func) {
+    await this.handleEvent(this.UserManagerContract, 'UserAdded', func)
+  }
+
+  async handleFriendAddedEvent(func) {
+    await this.handleEvent(this.UserManagerContract, 'FriendAdded', func)
   }
 }
 

@@ -22,9 +22,12 @@ const messageReducer = createSlice({
     },
     changeChat: (state, action) => {
       state.chatWith = action.payload
+    },
+    updateLastedMessages: (state, action) => {
+      state.lastedMessages = action.payload
     }
   }
 })
 
-export const { setMessages, addMessage, changeChat } = messageReducer.actions
+export const { setMessages, addMessage, changeChat, updateLastedMessages } = messageReducer.actions
 export default messageReducer.reducer

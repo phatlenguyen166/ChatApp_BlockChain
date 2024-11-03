@@ -1,4 +1,4 @@
-import { web3, UserManagerContract } from '../contracts/_index'
+import { web3, UserManagerContract, ChatManagerContract } from '../contracts/_index'
 import { storeDataToIPFS, retrieveDataFromIPFS } from './fileManager'
 import { generateRSAKeys, encryptWithRSA, decryptWithRSA } from './cryptoUtils'
 
@@ -8,6 +8,9 @@ class ContractExecution {
       this.privateKey = privateKey
       this.account = web3.eth.accounts.privateKeyToAccount(privateKey)
     }
+    this.UserManagerContract = UserManagerContract
+    this.ChatManagerContract = ChatManagerContract
+    this.event = false
   }
 
   setMessageKey(messagePublicKey, messagePrivateKey) {

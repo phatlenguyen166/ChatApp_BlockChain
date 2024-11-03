@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMessage } from '../redux/reducers/messageReducer'
-import { NotificationContainer, NotificationManager } from 'react-notifications'
-import { getUser } from '../excecutors/UserManager'
+import { NotificationManager } from 'react-notifications'
+import { getUser } from '../utils/UserManager'
+import { saveMessage } from '../utils/useIndexedDB'
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024
 
@@ -37,9 +38,10 @@ const Input = () => {
           isSender: true,
           timeStamp: new Date().toISOString()
         }
-        // dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
+        dispatch(addMessage(newMessage)) // Thêm message mới vào Redux store
         setMediaFile(null) // Reset media file sau khi gửi
         await manager.sendMessage(chatWith.address, base64File, type)
+        await saveMessage(chatWith.address, newMessage)
       }
 
       reader.readAsDataURL(file) // Đọc file dưới dạng base64
@@ -53,15 +55,15 @@ const Input = () => {
       }
       if (textMessage.trim()) {
         await manager.sendMessage(chatWith.address, textMessage.trim(), 0)
-        // dispatch(
-        //   addMessage({
-        //     content: textMessage.trim(),
-        //     type: 0,
-        //     isSender: true,
-        //     timeStamp: new Date().toISOString()
-        //   })
-        // )
+        const newMessage = {
+          content: textMessage.trim(),
+          type: 0,
+          isSender: true,
+          timeStamp: new Date().toISOString()
+        }
+        dispatch(addMessage(newMessage))
         setTextMessage('')
+        await saveMessage(chatWith.address, newMessage)
       }
       // window.dispatchEvent(new Event('newMessage'))
     } catch (e) {

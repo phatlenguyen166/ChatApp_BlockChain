@@ -4,7 +4,7 @@ import Input from './Input'
 import { useDispatch, useSelector } from 'react-redux'
 import { displaySeacrh } from '../redux/reducers/componentReducer'
 import { searchUsers } from '../redux/reducers/accountReducer'
-import { getUser } from '../excecutors/UserManager'
+import { getUser } from '../utils/UserManager'
 
 const Chat = React.memo(() => {
   const dispatch = useDispatch()

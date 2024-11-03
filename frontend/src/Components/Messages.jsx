@@ -1,25 +1,16 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { getUser } from '../utils/UserManager'
 import Message from './Message'
-import { getUser } from '../excecutors/UserManager'
-import { addMessage } from '../redux/reducers/messageReducer'
+
 
 const Messages = () => {
   const messages = useSelector((state) => state.messages.messages)
-  const chatWith = useSelector((state) => state.messages.chatWith)
+
+  const manager = getUser()
+
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    const manager = getUser()
-    manager.handleMessageSentEvent(async (e) => {
-      const message = await manager.getLastMessage(chatWith.address)
-      dispatch(addMessage(message))
-    })
-    return () => {
-      manager.offEvent('MessageSent')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatWith])
   const messagesEndRef = useRef(null)
 
   useEffect(() => {

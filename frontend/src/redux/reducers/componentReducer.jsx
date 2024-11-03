@@ -17,5 +17,5 @@ const componentReducer = createSlice({
   }
 })
 
-export const { displaySeacrh, hideSearch } = componentReducer.actions
+export const { displaySeacrh, hideSearch, setEvent } = componentReducer.actions
 export default componentReducer.reducer
