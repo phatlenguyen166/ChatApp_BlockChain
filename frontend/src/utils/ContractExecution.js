@@ -34,26 +34,21 @@ class ContractExecution {
 
   async signAndSendTransaction(tx) {
     try {
-      tx.gas = await web3.eth.estimateGas(tx)
+      tx.gas = 1200000n
       tx.gasLimit = tx.gas + tx.gas / 5n
       tx.chainId = 1337
 
       const signedTx = await web3.eth.accounts.signTransaction(tx, this.privateKey)
 
-      const transactionHash = await web3.eth
-        .sendSignedTransaction(signedTx.rawTransaction)
-        .on('receipt', (receipt) => {
-          console.log('Transaction receipt:', receipt)
-        })
-        .on('error', (error) => {
-          console.error('Error sending transaction:', error)
-          if (error && error.reason) {
-            console.error('Revert reason:', error.reason)
-          } else {
-            console.error('Unknown error:', error.message || error)
-          }
-          throw new Error('Gửi giao dịch không thành công.')
-        })
+      const transactionHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('error', (error) => {
+        console.error('Error sending transaction:', error)
+        if (error && error.reason) {
+          console.error('Revert reason:', error.reason)
+        } else {
+          console.error('Unknown error:', error.message || error)
+        }
+        throw new Error('Gửi giao dịch không thành công.')
+      })
       return {
         transactionHash,
         tx: signedTx
@@ -66,7 +61,9 @@ class ContractExecution {
 
   async upload(data, to) {
     try {
-      const receiver = await UserManagerContract.methods.getUserFromAddress(to).call({ from: this.account.address })
+      const receiver = await this.UserManagerContract.methods
+        .getUserFromAddress(to)
+        .call({ from: this.account.address })
       const senderKey = this.messagePublicKey
       const receiverKey = receiver.publicKey
       const cid = await storeDataToIPFS(data, senderKey, receiverKey)

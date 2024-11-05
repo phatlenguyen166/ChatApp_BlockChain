@@ -23,14 +23,9 @@ const createAccount = async () => {
 
   const signedTx = await web3.eth.accounts.signTransaction(tx, SENDER_PRIVATEKEY)
 
-  await web3.eth
-    .sendSignedTransaction(signedTx.rawTransaction)
-    .on('receipt', (receipt) => {
-      console.log('Transaction receipt:', receipt)
-    })
-    .on('error', (error) => {
-      console.error('Error sending transaction:', error)
-    })
+  await web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('error', (error) => {
+    console.error('Error sending transaction:', error)
+  })
 
   return account
 }

@@ -9,7 +9,7 @@ const SideBar = React.memo(() => {
   // console.log(filteredUsers.length)
 
   return (
-    <div className='flex flex-col bg-[#3e3c61] border-r-2'>
+    <div className='flex flex-col bg-[#3e3c61] w-[400px] border-r-2'>
       <Navbar />
       <Search />
       {/* <Chats /> */}

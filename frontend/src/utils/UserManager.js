@@ -60,6 +60,17 @@ class UserManager extends ContractExecution {
     }
   }
 
+  async isUniqueUsername(username) {
+    try {
+      const result = await this.UserManagerContract.methods
+        .isUniqueUsername(username)
+        .call({ from: import.meta.env.VITE_PROVIDER_PUBLIC_KEY })
+      return result
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
   async getUserInformation() {
     try {
       const result = await this.UserManagerContract.methods
@@ -127,7 +138,7 @@ class UserManager extends ContractExecution {
   async sendMessage(friend, content, type) {
     // const data = type === 0 ? content : fileToBase64(content)
     const { hashForSender, hashForReceiver } = await this.upload(content, friend)
-
+    
     const nonce = await web3.eth.getTransactionCount(this.account.address, 'latest')
     const tx = {
       nonce: nonce,
@@ -214,22 +225,6 @@ class UserManager extends ContractExecution {
     }
   }
 
-  // Hàm chung để lắng nghe sự kiện
-  async handleEvent(contract, eventName, callback) {
-    try {
-      const event = contract.events[eventName]({
-        fromBlock: 'latest'
-      })
-      await event.on('data', callback)
-      event.on('error', (error) => {
-        console.error(`Error in ${eventName} event:`, error)
-      })
-    } catch (error) {
-      console.error(`Failed to listen to ${eventName} event:`, error)
-      throw new Error(`Failed to listen ${eventName} event`)
-    }
-  }
-
   // Các hàm xử lý sự kiện riêng lẻ
   async handleMessageSentEvent(callback) {
     try {
@@ -248,12 +243,33 @@ class UserManager extends ContractExecution {
     }
   }
 
-  async handleUserAddedEvent(func) {
-    await this.handleEvent(this.UserManagerContract, 'UserAdded', func)
+  async handleUserAddedEvent(callback) {
+    try {
+      const event = this.UserManagerContract.events.UserAdded()
+
+      event.on('data', (data) => {
+        callback(data)
+      })
+    } catch (error) {
+      console.error(`Failed to listen to UserAdded event:`, error)
+      throw new Error(`Failed to listen UserAdded event`)
+    }
   }
 
-  async handleFriendAddedEvent(func) {
-    await this.handleEvent(this.UserManagerContract, 'FriendAdded', func)
+  async handleFriendAddedEvent(callback) {
+    try {
+      const event = this.UserManagerContract.events.FriendAdded({
+        filter: { friendAddress: this.account.address },
+        fromBlock: 'latest'
+      })
+
+      event.on('data', (data) => {
+        callback(data)
+      })
+    } catch (error) {
+      console.error(`Failed to listen to FriendAdded event:`, error)
+      throw new Error(`Failed to listen FriendAdded event`)
+    }
   }
 }
 

@@ -85,7 +85,7 @@ const Message = ({ message }) => {
               <div className='flex justify-end items-start'>
                 <div className='mr-3 text-right'>
                   <div className='text-white rounded-full inline-block'>{renderMediaMessage(message)}</div>
-                  <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
+                  {/* <p className='text-xs text-gray-500 mt-1'>{message.timestamp}</p> */}
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@ const Message = ({ message }) => {
               <div className='flex justify-start items-start'>
                 <div className='mr-3 text-left'>
                   <div className='text-white rounded-full inline-block'>{renderMediaMessage(message)}</div>
-                  <p className='text-xs text-gray-500 mt-1'>{new Date().toISOString()}</p>
+                  {/* <p className='text-xs text-gray-500 mt-1'>{message.timestamp}</p> */}
                 </div>
               </div>
             </div>

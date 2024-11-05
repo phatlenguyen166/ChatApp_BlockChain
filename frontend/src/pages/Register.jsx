@@ -3,8 +3,13 @@ import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { createAccount, UserManager } from '../excecutors/_index'
+import { createAccount, UserManager } from '../utils/_index'
+import { getUser } from '../utils/UserManager'
 import { addUser, changeCurrentUser } from '../redux/reducers/accountReducer'
+
+function randomNumber(start, end) {
+  return Math.floor(Math.random() * (end - start + 1)) + start
+}
 
 const Register = () => {
   const navigate = useNavigate()
@@ -25,6 +30,10 @@ const Register = () => {
     // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp nhau không
     if (data.password !== data.confirmPassword) {
       alert('Passwords do not match!')
+      return
+    }
+    if (!(await getUser().isUniqueUsername(data.username))) {
+      NotificationManager.error(`"${data.username}" already exists`, 'Invalid username')
       return
     }
 

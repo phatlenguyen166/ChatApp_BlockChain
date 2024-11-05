@@ -2,10 +2,18 @@ import { NotificationManager } from 'react-notifications'
 import React, { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { getUser, setUser } from '../excecutors/UserManager'
+import { getUser, setUser } from '../utils/UserManager'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeCurrentUser, searchFriends, setFriendList, setUserList } from '../redux/reducers/accountReducer'
 import { deleteDatabase } from '../utils/useIndexedDB'
+
+function convertNum(username) {
+  let total = 0
+  for (let i = 0; i < username.length; i++) {
+    total += username.charCodeAt(i) // Thêm mã ASCII của ký tự vào tổng
+  }
+  return (total % 500) + 100
+}
 
 const Login = () => {
   deleteDatabase()
@@ -20,33 +28,44 @@ const Login = () => {
   const chatWith = useSelector((state) => state.messages.chatWith)
 
   const onSubmit = async (data) => {
-    const manager = setUser(data.username, data.password)
-    const userData = await manager.getUserInformation()
-    const usersData = await manager.getUserList()
-    const friendsData = await manager.getFriendList()
-    const userInfo = {
-      username: userData.username,
-      password: data.password,
-      address: userData.userAddress
+    if (localStorage.getItem(data.username) === null) {
+      NotificationManager.error('Provided username is not saved on this device', 'No username`s saved')
+      return
     }
-    dispatch(changeCurrentUser(userInfo))
-    const users = usersData.map((user) => {
-      return {
-        username: user.username,
-        address: user.userAddress
+    try {
+      const manager = setUser(data.username, data.password)
+      const userData = await manager.getUserInformation()
+      const usersData = await manager.getUserList()
+      const friendsData = await manager.getFriendList()
+      const userInfo = {
+        username: userData.username,
+        password: data.password,
+        address: userData.userAddress,
+        url: `https://picsum.photos/id/${convertNum(userData.username)}/200/300`
       }
-    })
-    const friends = friendsData.map((user) => {
-      return {
-        username: user.username,
-        address: user.userAddress
-      }
-    })
-    dispatch(setUserList(users))
-    dispatch(setFriendList(friends))
-    dispatch(searchFriends(''))
-    NotificationManager.success(`Welcome ${data.username}`, 'Login Successful')
-    navigate('/home')
+      dispatch(changeCurrentUser(userInfo))
+      const users = usersData.map((user) => {
+        return {
+          username: user.username,
+          address: user.userAddress,
+          url: `https://picsum.photos/id/${convertNum(user.username)}/200/300`
+        }
+      })
+      const friends = friendsData.map((user) => {
+        return {
+          username: user.username,
+          address: user.userAddress,
+          url: `https://picsum.photos/id/${convertNum(user.username)}/200/300`
+        }
+      })
+      dispatch(setUserList(users))
+      dispatch(setFriendList(friends))
+      dispatch(searchFriends(''))
+      NotificationManager.success(`Welcome ${data.username}`, 'Login Successful')
+      navigate('/home')
+    } catch (e) {
+      NotificationManager.error('Incorrect password', 'Login Failed')
+    }
   }
 
   return (

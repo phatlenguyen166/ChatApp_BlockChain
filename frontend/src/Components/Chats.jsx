@@ -23,7 +23,6 @@ const Chats = () => {
       await initializeMessagesById(user.address, messages)
     }
     const chatMessages = await getMessagesByUser(user.address)
-    console.log(chatMessages.map((message) => message.message))
     dispatch(setMessages(chatMessages.map((message) => message.message)))
   }
 
@@ -32,10 +31,12 @@ const Chats = () => {
       return (
         <div
           key={user.address}
-          className='flex items-center gap-2 text-white cursor-pointer hover:bg-[#2e1065] transition-all duration-300 ease-in-out p-2 rounded-md'
+          className={`flex items-center gap-2 text-white cursor-pointer 
+            ${chatWith.address === user.address ? 'bg-[#160731]' : ''} 
+            hover:bg-[#2e1065] transition-all duration-300 ease-in-out p-2 rounded-md`}
           onClick={(e) => handleChangeChat(user)}
         >
-          <img className='w-12 h-12 rounded-full object-cover' src='https://thispersondoesnotexist.com/' />
+          <img className='w-12 h-12 rounded-full object-cover' src={user.url} />
           <div>
             <span className='text-base font-semibold'>{user.username}</span>
             <p className='text-sm text-gray-300'>{user.address}</p>

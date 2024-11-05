@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { hideSearch } from '../redux/reducers/componentReducer'
-import { searchUsers, searchFriends } from '../redux/reducers/accountReducer'
+import { addFriend, searchUsers, searchFriends } from '../redux/reducers/accountReducer'
 import PropTypes from 'prop-types'
 import { getUser } from '../utils/UserManager'
 
@@ -72,12 +72,19 @@ const UserItem = React.memo(({ info }) => {
   const handleAddfriend = async () => {
     await manager.addFriend(info.address)
     setIsFriend(true)
+    dispatch(
+      addFriend({
+        address: info.address,
+        username: info.username,
+        url: info.url
+      })
+    )
     dispatch(searchFriends(''))
   }
   return (
     <div className='flex justify-between items-center p-2 border border-gray-250 rounded'>
       <div className='flex items-center'>
-        <img src='https://picsum.photos/id/222/200/300' alt='' className='w-[35px] h-[35px] rounded-full mr-2' />
+        <img src={info.url} alt='' className='w-[35px] h-[35px] rounded-full mr-2' />
         <div>
           <p className='font-bold'>{info.username}</p>
           <p className='text-[13px]'>{info.address}</p>
@@ -103,7 +110,8 @@ UserItem.displayName = 'UserItem'
 UserItem.propTypes = {
   info: PropTypes.shape({
     username: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired
+    address: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
   }).isRequired
 }
 export default React.memo(UserList)

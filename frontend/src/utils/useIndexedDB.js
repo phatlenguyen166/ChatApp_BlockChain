@@ -59,7 +59,6 @@ export const initializeMessagesById = async (userId, defaultMessages) => {
     for (const message of defaultMessages) {
       await saveMessage(userId, message)
     }
-    console.log('Initialized default messages for user:', userId)
   } else {
     console.log('Messages already exist for user:', userId)
   }
@@ -72,8 +71,8 @@ export const checkConversationExists = async (userId) => {
 
 export const deleteDatabase = async () => {
   try {
-    await indexedDB.deleteDatabase('ChatAppDB')
-    console.log(`Database "ChatAppDB" deleted successfully.`)
+    indexedDB.deleteDatabase('ChatAppDB')
+    return true
   } catch (error) {
     console.error(`Failed to delete database "ChatAppDB":`, error)
   }
