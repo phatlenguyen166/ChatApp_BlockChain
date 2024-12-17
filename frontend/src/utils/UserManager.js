@@ -1,6 +1,6 @@
 import { web3 } from '../contracts/_index'
 import ContractExecution from './ContractExecution'
-import { getDataWithAuth, storeDataWithAuth, fileToBase64, base64ToUrl } from './cryptoUtils'
+import { getDataWithAuth, storeDataWithAuth } from './cryptoUtils'
 
 class UserManager extends ContractExecution {
   constructor(param1 = null, param2 = null) {
@@ -138,7 +138,7 @@ class UserManager extends ContractExecution {
   async sendMessage(friend, content, type) {
     // const data = type === 0 ? content : fileToBase64(content)
     const { hashForSender, hashForReceiver } = await this.upload(content, friend)
-    
+
     const nonce = await web3.eth.getTransactionCount(this.account.address, 'latest')
     const tx = {
       nonce: nonce,

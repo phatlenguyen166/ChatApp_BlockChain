@@ -64,6 +64,7 @@ class ContractExecution {
       const receiver = await this.UserManagerContract.methods
         .getUserFromAddress(to)
         .call({ from: this.account.address })
+
       const senderKey = this.messagePublicKey
       const receiverKey = receiver.publicKey
       const cid = await storeDataToIPFS(data, senderKey, receiverKey)

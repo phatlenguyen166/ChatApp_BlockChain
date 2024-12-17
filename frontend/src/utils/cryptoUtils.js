@@ -107,33 +107,33 @@ const getDataWithAuth = (username, password) => {
 }
 
 // Chuyển đổi File thành base64
-const fileToBase64 = async (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
+// const fileToBase64 = async (file) => {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader()
+//     reader.onloadend = () => resolve(reader.result)
+//     reader.onerror = reject
+//     reader.readAsDataURL(file)
+//   })
+// }
 
-const base64ToUrl = (base64Data) => {
-  const mimeMatch = base64Data.match(/^data:([a-zA-Z0-9+/.-]+);base64,/)
-  const mimeType = mimeMatch ? mimeMatch[1] : 'application/octet-stream'
+// const base64ToUrl = (base64Data) => {
+//   const mimeMatch = base64Data.match(/^data:([a-zA-Z0-9+/.-]+);base64,/)
+//   const mimeType = mimeMatch ? mimeMatch[1] : 'application/octet-stream'
 
-  // Tách phần dữ liệu base64 ra
-  const byteCharacters = atob(base64Data.split(',')[1])
-  const byteNumbers = new Array(byteCharacters.length)
+//   // Tách phần dữ liệu base64 ra
+//   const byteCharacters = atob(base64Data.split(',')[1])
+//   const byteNumbers = new Array(byteCharacters.length)
 
-  // Chuyển đổi thành mảng byte
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i)
-  }
+//   // Chuyển đổi thành mảng byte
+//   for (let i = 0; i < byteCharacters.length; i++) {
+//     byteNumbers[i] = byteCharacters.charCodeAt(i)
+//   }
 
-  const byteArray = new Uint8Array(byteNumbers)
-  const blob = new Blob([byteArray], { type: mimeType })
+//   const byteArray = new Uint8Array(byteNumbers)
+//   const blob = new Blob([byteArray], { type: mimeType })
 
-  return URL.createObjectURL(blob)
-}
+//   return URL.createObjectURL(blob)
+// }
 
 export {
   generateRSAKeys,
@@ -142,7 +142,7 @@ export {
   encryptWithAES,
   decryptWithAES,
   storeDataWithAuth,
-  getDataWithAuth,
-  fileToBase64,
-  base64ToUrl
+  getDataWithAuth
+  // fileToBase64,
+  // base64ToUrl
 }

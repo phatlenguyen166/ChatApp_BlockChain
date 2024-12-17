@@ -29,7 +29,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     // Kiểm tra xem mật khẩu và xác nhận mật khẩu có khớp nhau không
     if (data.password !== data.confirmPassword) {
-      alert('Passwords do not match!')
+      NotificationManager.error(`Sign-in again to use DApp`, 'Sign-up Successful')
       return
     }
     if (!(await getUser().isUniqueUsername(data.username))) {
@@ -53,7 +53,15 @@ const Register = () => {
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
           <div>
             <input
-              {...register('username', { required: 'Username is required! ' })}
+              {...register('username', {
+                required: 'Username is required!',
+                minLength: {
+                  value: 3,
+                  message: 'Username must be at least 3 characters.'
+                },
+                validate: (value) =>
+                  /^[a-zA-Z0-9]+$/.test(value) || 'Username must contain only alphanumeric characters.'
+              })}
               className='input-style'
               type='text'
               placeholder='Username'

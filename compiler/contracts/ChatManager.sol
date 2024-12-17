@@ -56,7 +56,6 @@ contract ChatManager {
     bytes32 chatCode = _getChatCode(msg.sender, _friend);
     Message memory newMsg = _createMessage(_friend, _hashForSender, _hashForReceiver, _msgType);
     messages[chatCode].push(newMsg);
-
     emit MessageSent(msg.sender, _friend, _hashForSender, _hashForReceiver, _msgType, block.timestamp);
   }
 

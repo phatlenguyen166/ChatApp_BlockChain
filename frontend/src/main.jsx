@@ -8,9 +8,9 @@ import { NotificationContainer } from 'react-notifications'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <React.StrictMode>
-      <App />
-      <NotificationContainer />
-    </React.StrictMode>
+    {/* <React.StrictMode> */}
+    <App />
+    <NotificationContainer />
+    {/* </React.StrictMode> */}
   </Provider>
 )

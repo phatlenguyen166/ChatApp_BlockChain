@@ -25,6 +25,7 @@ async function uploadDataToIPFS(jsonData) {
   try {
     const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' })
     const added = await ipfs.add(blob)
+
     return added.path
   } catch (error) {
     console.error('Error uploading string:', error)

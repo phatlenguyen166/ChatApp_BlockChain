@@ -16,7 +16,7 @@ contract UserManager {
   mapping (address => User[]) public friendList;
 
   event UserAdded(address indexed userAddress, string username);
-  event FriendAdded(address indexed userAddress, address indexed friendAddress);
+  event FriendAdded(address indexed userAddress, address indexed friendAddress, string username);
 
   function addUser(string memory _username, string memory _publicKey) public {
     require(isUser[msg.sender] == false, "User already exists");
@@ -45,14 +45,14 @@ contract UserManager {
     return isUser[msg.sender];
   }
 
-function isUniqueUsername(string memory _username) public view returns (bool) {
-  for (uint256 index = 0; index < users.length; index++) {
-    if (keccak256(bytes(users[index].username)) == keccak256(bytes(_username))) {
-      return false;
+  function isUniqueUsername(string memory _username) public view returns (bool) {
+    for (uint256 index = 0; index < users.length; index++) {
+      if (keccak256(bytes(users[index].username)) == keccak256(bytes(_username))) {
+        return false;
+      }
     }
+    return true;
   }
-  return true;
-}
 
   function isFriendRelationship(address _user) public view returns (bool) {
     require(isUser[msg.sender], "Create an account first!!!");
@@ -77,7 +77,7 @@ function isUniqueUsername(string memory _username) public view returns (bool) {
     isFriend[msg.sender][_user] = true;
     isFriend[_user][msg.sender] = true;
 
-    emit FriendAdded(msg.sender, _user);
+    emit FriendAdded(msg.sender, _user, user[msg.sender].username);
   }
   
 }

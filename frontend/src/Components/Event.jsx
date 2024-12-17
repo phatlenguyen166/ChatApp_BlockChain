@@ -48,7 +48,8 @@ const Event = () => {
       try {
         const friend = {
           address: e.returnValues.userAddress,
-          username: e.returnValues.username
+          username: e.returnValues.username,
+          url: `https://picsum.photos/id/${convertNum(e.returnValues.username)}/200/300`
         }
         dispatch(addFriend(friend))
         dispatch(searchFriends(''))
