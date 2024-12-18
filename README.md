@@ -38,16 +38,27 @@ Một ứng dụng nhắn tin phi tập trung (DApp) hỗ trợ đa phương ti�
 
 ### Hướng dẫn cài đặt
 1. Clone dự án:
-   ```bash
+  
    git clone https://github.com/phatlenguyen166/ChatApp_BlockChain.git
 2. Chạy giao diện
-    + Vào thư mục chứa dự án: cd ChatApp_BlockChain/
-    + Vào thư mục chứa giao diện của dự án: cd frontend/
-    + Cài đặt dependencies: npm install
-    + Khởi chạy giao diện: npm run dev
+    + Vào thư mục chứa dự án:
+      ```bash
+      cd ChatApp_BlockChain/
+    + Vào thư mục chứa giao diện của dự án:
+      ```bash
+       cd frontend/
+    + Cài đặt dependencies:
+       ```bash
+       npm install
+    ```bash
+      Khởi chạy giao diện: npm run dev
 3. Chạy smart contract
-    + Vào thư mục chứa contract: cd compiler
-    + Cài đặt truffle: npm i -g truffle
+    + Vào thư mục chứa contract:
+      ```bash
+      cd compiler
+    + Cài đặt truffle:
+      ```bash
+       npm i -g truffle
     + Chạy file ./deploy.ps1
 4. Khởi chạy Ganache và IPFS Desktop
 
